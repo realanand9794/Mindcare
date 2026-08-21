@@ -1,0 +1,479 @@
+/*=====================================
+Google Font
+=====================================*/
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    background:#f5f7fb;
+    color:#333;
+    line-height:1.6;
+}
+
+/*=====================================
+Header
+=====================================*/
+
+header{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    background:#fff;
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+    z-index:1000;
+}
+
+nav{
+    width:90%;
+    margin:auto;
+    height:75px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.logo{
+    font-size:28px;
+    font-weight:700;
+    color:#4f46e5;
+}
+
+.logo i{
+    color:#ff4d6d;
+}
+
+nav ul{
+    display:flex;
+    list-style:none;
+    gap:25px;
+}
+
+nav ul li a{
+    text-decoration:none;
+    color:#333;
+    font-weight:500;
+    transition:.3s;
+}
+
+nav ul li a:hover{
+    color:#4f46e5;
+}
+
+/*=====================================
+Hero Section
+=====================================*/
+
+.hero{
+    margin-top:75px;
+    padding:60px 8%;
+    background:linear-gradient(135deg,#4f46e5,#7c3aed);
+    color:#fff;
+}
+
+.hero-content{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:50px;
+    flex-wrap:wrap;
+}
+
+.doctor-image img{
+    width:300px;
+    height:300px;
+    object-fit:cover;
+    border-radius:20px;
+    border:6px solid rgba(255,255,255,.4);
+    box-shadow:0 15px 30px rgba(0,0,0,.25);
+}
+
+.doctor-info{
+    flex:1;
+}
+
+.doctor-info h1{
+    font-size:42px;
+    margin-bottom:10px;
+}
+
+.doctor-info h3{
+    font-size:24px;
+    font-weight:500;
+    margin-bottom:15px;
+}
+
+.rating{
+    font-size:20px;
+    margin-bottom:20px;
+}
+
+.details{
+    margin:20px 0;
+}
+
+.details p{
+    margin:10px 0;
+    font-size:17px;
+}
+
+.details i{
+    width:30px;
+    color:#ffd166;
+}
+
+.fee{
+    margin:25px 0;
+    font-size:28px;
+}
+
+.fee span{
+    color:#ffe066;
+}
+
+.book-btn{
+    padding:15px 35px;
+    border:none;
+    border-radius:40px;
+    background:#fff;
+    color:#4f46e5;
+    font-size:17px;
+    font-weight:600;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.book-btn:hover{
+    transform:translateY(-5px);
+    box-shadow:0 12px 25px rgba(0,0,0,.2);
+}
+
+/*=====================================
+Common Sections
+=====================================*/
+
+.about,
+.specialization,
+.education,
+.availability,
+.working-hours,
+.reviews,
+.similar,
+.contact-box{
+    width:90%;
+    margin:40px auto;
+    background:#fff;
+    padding:35px;
+    border-radius:20px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+.about h2,
+.specialization h2,
+.education h2,
+.availability h2,
+.working-hours h2,
+.reviews h2,
+.similar h2,
+.contact-box h2{
+    color:#4f46e5;
+    margin-bottom:20px;
+}
+
+/*=====================================
+Specialization
+=====================================*/
+
+.skills{
+    display:flex;
+    flex-wrap:wrap;
+    gap:15px;
+}
+
+.skills span{
+    background:#eef2ff;
+    color:#4f46e5;
+    padding:12px 18px;
+    border-radius:30px;
+    font-weight:500;
+}
+
+/*=====================================
+Education Timeline
+=====================================*/
+
+.timeline{
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+}
+
+.item{
+    border-left:5px solid #4f46e5;
+    padding-left:20px;
+}
+
+.item h3{
+    color:#222;
+}
+
+.item p{
+    color:#666;
+}
+/*=====================================
+Available Slots
+=====================================*/
+
+.slots{
+    display:flex;
+    flex-wrap:wrap;
+    gap:15px;
+    margin-top:20px;
+}
+
+.slots button{
+    padding:12px 22px;
+    border:none;
+    border-radius:30px;
+    background:#4f46e5;
+    color:#fff;
+    font-size:15px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.slots button:hover{
+    background:#3730a3;
+    transform:translateY(-3px);
+}
+
+/*=====================================
+Working Hours Table
+=====================================*/
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+}
+
+table th{
+    background:#4f46e5;
+    color:#fff;
+}
+
+table th,
+table td{
+    padding:15px;
+    text-align:left;
+    border:1px solid #ddd;
+}
+
+table tr:nth-child(even){
+    background:#f9f9f9;
+}
+
+/*=====================================
+Reviews
+=====================================*/
+
+.review-card{
+    background:#f8f9ff;
+    padding:20px;
+    border-left:5px solid #4f46e5;
+    border-radius:12px;
+    margin-bottom:20px;
+    transition:.3s;
+}
+
+.review-card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 10px 20px rgba(0,0,0,.1);
+}
+
+.review-card h3{
+    margin-bottom:10px;
+    color:#333;
+}
+
+.review-card p{
+    color:#666;
+}
+
+/*=====================================
+Similar Therapists
+=====================================*/
+
+.similar-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:25px;
+}
+
+.similar-card{
+    background:#fff;
+    text-align:center;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+    transition:.3s;
+}
+
+.similar-card:hover{
+    transform:translateY(-8px);
+}
+
+.similar-card img{
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    object-fit:cover;
+    margin-bottom:15px;
+    border:4px solid #4f46e5;
+}
+
+.similar-card h3{
+    margin-bottom:8px;
+}
+
+.similar-card p{
+    color:#666;
+    margin-bottom:15px;
+}
+
+.similar-card button{
+    padding:10px 20px;
+    border:none;
+    border-radius:30px;
+    background:#4f46e5;
+    color:#fff;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.similar-card button:hover{
+    background:#3730a3;
+}
+
+/*=====================================
+Contact Section
+=====================================*/
+
+.contact-box{
+    text-align:center;
+}
+
+.contact-box p{
+    margin:10px 0;
+    font-size:16px;
+}
+
+/*=====================================
+Footer
+=====================================*/
+
+footer{
+    background:#111827;
+    color:#fff;
+    text-align:center;
+    padding:25px;
+    margin-top:40px;
+}
+
+/*=====================================
+Responsive
+=====================================*/
+
+@media(max-width:992px){
+
+.hero-content{
+    flex-direction:column;
+    text-align:center;
+}
+
+.doctor-image img{
+    width:250px;
+    height:250px;
+}
+
+.details{
+    text-align:left;
+}
+
+}
+
+@media(max-width:768px){
+
+nav{
+    flex-direction:column;
+    height:auto;
+    padding:15px 0;
+}
+
+nav ul{
+    flex-direction:column;
+    gap:15px;
+    margin-top:15px;
+}
+
+.hero{
+    padding:40px 20px;
+}
+
+.doctor-info h1{
+    font-size:32px;
+}
+
+.doctor-info h3{
+    font-size:20px;
+}
+
+.about,
+.specialization,
+.education,
+.availability,
+.working-hours,
+.reviews,
+.similar,
+.contact-box{
+    width:95%;
+    padding:20px;
+}
+
+table{
+    display:block;
+    overflow-x:auto;
+}
+
+}
+
+@media(max-width:480px){
+
+.doctor-image img{
+    width:180px;
+    height:180px;
+}
+
+.book-btn{
+    width:100%;
+}
+
+.slots button{
+    width:100%;
+}
+
+.similar-grid{
+    grid-template-columns:1fr;
+}
+
+.review-card{
+    padding:15px;
+}
+
+}

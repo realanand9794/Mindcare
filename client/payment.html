@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Payment | MindCare</title>
+
+<link rel="stylesheet" href="css/payment.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+</head>
+
+<body>
+
+<header>
+
+<nav>
+
+<div class="logo">
+
+<i class="fa-solid fa-heart-pulse"></i>
+
+MindCare
+
+</div>
+
+<ul>
+
+<li><a href="index.html">Home</a></li>
+
+<li><a href="dashboard.html">Dashboard</a></li>
+
+<li><a href="appointment.html">Appointment</a></li>
+
+<li><a href="therapists.html">Therapists</a></li>
+
+</ul>
+
+</nav>
+
+</header>
+
+<section class="payment-container">
+
+<div class="left">
+
+<h2>Billing Details</h2>
+
+<form>
+
+<input
+type="text"
+placeholder="Full Name"
+required>
+
+<input
+type="email"
+placeholder="Email Address"
+required>
+
+<input
+type="tel"
+placeholder="Mobile Number"
+required>
+
+<input
+type="text"
+placeholder="City"
+required>
+
+<textarea
+placeholder="Full Address"></textarea>
+
+</form>
+
+<h2>Apply Coupon</h2>
+
+<div class="coupon">
+
+<input
+type="text"
+placeholder="Enter Coupon Code">
+
+<button>
+
+Apply
+
+</button>
+
+</div>
+
+<h2>Select Payment Method</h2>
+
+<div class="methods">
+
+<label>
+
+<input
+type="radio"
+name="pay"
+checked>
+
+💳 Credit / Debit Card
+
+</label>
+
+<label>
+
+<input
+type="radio"
+name="pay">
+
+📱 UPI
+
+</label>
+
+<label>
+
+<input
+type="radio"
+name="pay">
+
+🏦 Net Banking
+
+</label>
+
+<label>
+
+<input
+type="radio"
+name="pay">
+
+👛 Wallet
+
+</label>
+
+</div>
+
+</div>
+
+<div class="right">
+
+<h2>Order Summary</h2>
+
+<div class="summary">
+
+<div>
+
+<span>Therapist</span>
+
+<strong>Dr. Sarah Wilson</strong>
+
+</div>
+
+<div>
+
+<span>Session</span>
+
+<strong>60 Minutes</strong>
+
+</div>
+
+<div>
+
+<span>Date</span>
+
+<strong>08 August 2026</strong>
+
+</div>
+
+<div>
+
+<span>Consultation Fee</span>
+
+<strong>₹799</strong>
+
+</div>
+
+<div>
+
+<span>Platform Fee</span>
+
+<strong>₹49</strong>
+
+</div>
+
+<div>
+
+<span>GST</span>
+
+<strong>₹152</strong>
+
+</div>
+
+<hr>
+
+<div class="total">
+
+<span>Total</span>
+
+<strong>₹1000</strong>
+
+</div>
+
+<button id="payBtn">
+
+Proceed to Pay
+
+</button>
+
+</div>
+
+</div>
+
+</section>
+<!-- ================= SECURITY ================= -->
+
+<section class="security">
+
+    <div class="security-card">
+
+        <i class="fa-solid fa-lock"></i>
+
+        <h3>100% Secure Payment</h3>
+
+        <p>
+            Your payment is encrypted using industry-standard SSL security.
+            Your personal and payment information remains safe and confidential.
+        </p>
+
+    </div>
+
+</section>
+
+<!-- ================= PAYMENT BENEFITS ================= -->
+
+<section class="benefits">
+
+    <h2>Why Choose MindCare?</h2>
+
+    <div class="benefit-grid">
+
+        <div class="benefit-card">
+            <i class="fa-solid fa-user-doctor"></i>
+            <h3>Certified Therapists</h3>
+            <p>Consult experienced and licensed mental health professionals.</p>
+        </div>
+
+        <div class="benefit-card">
+            <i class="fa-solid fa-video"></i>
+            <h3>Video Consultation</h3>
+            <p>Attend secure online therapy sessions from your home.</p>
+        </div>
+
+        <div class="benefit-card">
+            <i class="fa-solid fa-comments"></i>
+            <h3>Private Chat</h3>
+            <p>Communicate securely with your therapist anytime.</p>
+        </div>
+
+        <div class="benefit-card">
+            <i class="fa-solid fa-shield-heart"></i>
+            <h3>Privacy Protected</h3>
+            <p>Your therapy sessions and records remain confidential.</p>
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= SUPPORT ================= -->
+
+<section class="support">
+
+    <h2>Need Help?</h2>
+
+    <p><strong>Email:</strong> mindcare9794@gmail.com</p>
+
+    <p><strong>Phone:</strong> +91 9794401568</p>
+
+    <p>Our support team is available 24×7 to assist you.</p>
+
+</section>
+
+<!-- ================= FOOTER ================= -->
+
+<footer>
+
+    <p>© 2026 MindCare. All Rights Reserved.</p>
+
+</footer>
+
+<script src="js/payment.js"></script>
+
+</body>
+</html>

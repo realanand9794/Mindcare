@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>MindCare Consultation</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+    <link rel="stylesheet" href="css/video.css">
+    <link rel="stylesheet" href="css/dark-theme.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="video-container">
+
+        <!-- Call Area -->
+        <div class="video-area">
+
+            <div class="doctor-video">
+
+                <img id="doctorAvatar" src="https://randomuser.me/api/portraits/women/44.jpg" alt="Doctor Avatar">
+
+                <h3 id="doctorNameHeader">Dr. Sarah Wilson</h3>
+
+                <span id="callStatusBadge" class="live">● Live Session</span>
+
+            </div>
+
+            <div class="patient-video" id="patientVideoBox">
+                <video id="localVideo" autoplay playsinline muted style="width:100%; height:100%; object-fit:cover; border-radius:12px; display:none;"></video>
+                <img id="patientImg" src="https://randomuser.me/api/portraits/men/45.jpg" alt="Patient Avatar">
+                <h4>You</h4>
+            </div>
+
+            <div class="controls">
+
+                <button id="micBtn" title="Toggle Microphone">
+                    <i class="fas fa-microphone"></i>
+                </button>
+
+                <button id="cameraBtn" title="Toggle Camera">
+                    <i class="fas fa-video"></i>
+                </button>
+
+                <button id="endBtn" class="end-call" title="End Call">
+                    <i class="fas fa-phone-slash"></i>
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="js/theme.js"></script>
+    <script src="js/video.js"></script>
+
+</body>
+
+</html>

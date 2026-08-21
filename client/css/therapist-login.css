@@ -1,0 +1,156 @@
+/* =========================================
+MindCare Therapist Login Page Styling
+========================================= */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: radial-gradient(circle at top right, #312e81, #0f172a);
+    color: #f8fafc;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.therapist-login-page {
+    width: 100%;
+    max-width: 460px;
+    padding: 20px;
+}
+
+.therapist-login-card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+.portal-brand i {
+    font-size: 46px;
+    color: #818cf8;
+    margin-bottom: 12px;
+}
+
+.portal-brand h2 {
+    font-size: 24px;
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.portal-brand p {
+    font-size: 13px;
+    color: #94a3b8;
+    margin-bottom: 24px;
+}
+
+/* Quick Selector Box */
+.quick-selector-box {
+    background: #0f172a;
+    border: 1px solid #334155;
+    padding: 14px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    text-align: left;
+}
+
+.quick-selector-box label {
+    font-size: 12px;
+    color: #818cf8;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.quick-selector-box select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #475569;
+    background: #1e293b;
+    color: #ffffff;
+    font-size: 13px;
+    outline: none;
+}
+
+.input-group {
+    text-align: left;
+    margin-bottom: 18px;
+}
+
+.input-group label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #cbd5e1;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid #475569;
+    background: #0f172a;
+    color: #ffffff;
+    outline: none;
+    font-size: 14px;
+}
+
+.input-group input:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+.therapist-submit-btn {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+    transition: all 0.2s ease;
+}
+
+.therapist-submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(99, 102, 241, 0.6);
+}
+
+.card-footer-info {
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid #334155;
+    font-size: 12.5px;
+    color: #64748b;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.card-footer-info a {
+    color: #818cf8;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.card-footer-info a:hover {
+    text-decoration: underline;
+}

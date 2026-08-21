@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Therapist Portal & Dashboard | MindCare</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+    <link rel="stylesheet" href="css/therapist-dashboard.css">
+    <link rel="stylesheet" href="css/dark-theme.css">
+    <script src="js/theme.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="therapist-portal-container">
+
+        <!-- Sidebar -->
+        <aside class="portal-sidebar">
+            <div class="sidebar-logo">
+                <i class="fa-solid fa-user-doctor"></i>
+                <span>MindCare Portal</span>
+            </div>
+
+            <!-- Doctor Quick Profile Info -->
+            <div class="sidebar-doctor-card">
+                <img id="doctorAvatar" src="https://randomuser.me/api/portraits/women/44.jpg" alt="Doctor Photo">
+                <h4 id="doctorNameDisplay">Dr. Sarah Wilson</h4>
+                <p id="doctorSpecDisplay">Clinical Psychologist</p>
+                <span class="online-tag">● Doctor Online</span>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="sidebar-menu">
+                <a href="#appointments" class="menu-item active" data-tab="appointments">
+                    <i class="fa-solid fa-calendar-check"></i> Patient Appointments
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button id="therapistLogoutBtn" class="logout-btn">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="portal-main">
+
+            <header class="portal-topbar">
+                <div>
+                    <h2>Therapist Consultation Dashboard</h2>
+                    <p class="welcome-sub">Manage your assigned patient sessions, video/voice calls, and live chats.</p>
+                </div>
+                <div class="topbar-actions">
+                    <span class="role-badge"><i class="fa-solid fa-shield-check"></i> Hired Therapist ID</span>
+                </div>
+            </header>
+
+            <!-- Doctor Overview Stats Cards -->
+            <div class="doctor-stats-grid">
+
+                <div class="doc-stat-card">
+                    <i class="fa-solid fa-calendar-day" style="color: #059669;"></i>
+                    <div>
+                        <p>Upcoming Today</p>
+                        <h3 id="upcomingTodayCount">0</h3>
+                    </div>
+                </div>
+
+                <div class="doc-stat-card">
+                    <i class="fa-solid fa-circle-check" style="color: #22c55e;"></i>
+                    <div>
+                        <p>Completed Sessions</p>
+                        <h3 id="completedSessionsCount">0</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active / Upcoming Patients Appointment Table Card -->
+            <div class="table-card" style="margin-bottom: 30px;">
+                <div class="card-header">
+                    <h3><i class="fa-solid fa-list-check" style="color: #6366f1; margin-right: 8px;"></i> Active & Scheduled Patient Sessions</h3>
+                    <p style="font-size: 13px; color: #94a3b8; margin-top: 4px;">Click session button to connect with your patient or click Complete when session finishes.</p>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="patient-table">
+                        <thead>
+                            <tr>
+                                <th>Patient Name</th>
+                                <th>Age / Gender</th>
+                                <th>Primary Concern</th>
+                                <th>Date & Time</th>
+                                <th>Mode</th>
+                                <th>Status</th>
+                                <th style="text-align: right;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="therapistPatientTableBody">
+                            <!-- Populated dynamically with active patient bookings -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Completed & Missed Sessions Table Card (Top 5 Recent) -->
+            <div class="table-card">
+                <div class="card-header">
+                    <h3><i class="fa-solid fa-clock-rotate-left" style="color: #38bdf8; margin-right: 8px;"></i> Past & Completed Sessions History (Top 5)</h3>
+                    <p style="font-size: 13px; color: #94a3b8; margin-top: 4px;">Archive of top 5 completed or missed past patient sessions.</p>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="patient-table">
+                        <thead>
+                            <tr>
+                                <th>Patient Name</th>
+                                <th>Age / Gender</th>
+                                <th>Primary Concern</th>
+                                <th>Date & Time</th>
+                                <th>Mode</th>
+                                <th>Session Status</th>
+                                <th style="text-align: right;">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="therapistCompletedTableBody">
+                            <!-- Populated dynamically with completed patient sessions -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+
+    </div>
+
+    <script src="js/theme.js"></script>
+    <script src="js/therapist-dashboard.js"></script>
+
+</body>
+
+</html>

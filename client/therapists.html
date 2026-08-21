@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Therapists | MindCare</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="css/therapists.css">
+    <link rel="stylesheet" href="css/dark-theme.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <style>
+        .filter-bar {
+            max-width: 1100px;
+            margin: 20px auto;
+            padding: 0 20px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .filter-bar input,
+        .filter-bar select {
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            font-size: 14px;
+        }
+
+        .filter-bar input {
+            width: 300px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Meet Our Certified Therapists</h1>
+        <p>Choose the best specialist for your mental wellness journey.</p>
+    </header>
+
+    <div class="filter-bar">
+        <input type="text" id="searchInput" placeholder="🔍 Search therapist by name...">
+        <select id="specialization">
+            <option value="all">All Specializations</option>
+            <option value="psychologist">Clinical Psychologist</option>
+            <option value="anxiety">Anxiety Specialist</option>
+            <option value="counselor">Relationship Counselor</option>
+            <option value="depression">Depression Expert</option>
+        </select>
+    </div>
+
+    <section class="container" id="therapistContainer">
+        <!-- Dynamic Therapists Loaded Here -->
+    </section>
+
+    <script src="js/theme.js"></script>
+    <script src="js/therapists.js"></script>
+</body>
+
+</html>

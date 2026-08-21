@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>MindCare Dashboard</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg?v=2">
+
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/dark-theme.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+</head>
+
+<body>
+
+    <div class="dashboard">
+
+        <!-- Sidebar -->
+
+        <div class="sidebar">
+
+            <div class="logo">
+
+                <i class="fa-solid fa-heart-pulse"></i>
+
+                <h2>MindCare</h2>
+
+            </div>
+
+            <ul>
+
+                <li class="active" onclick="window.location.href='dashboard.html'">
+                    <i class="fa-solid fa-house"></i>
+                    Dashboard
+                </li>
+
+                <li onclick="window.location.href='appointments.html'">
+
+                    <i class="fa-solid fa-calendar-check"></i>
+
+                    Appointments
+
+                </li>
+
+                <li onclick="window.location.href='therapists.html'">
+                    <i class="fa-solid fa-user-doctor"></i>
+                    Therapists
+                </li>
+
+                <li onclick="window.location.href='live-chat.html'">
+                    <i class="fa-solid fa-comments"></i>
+                    Messages
+                </li>
+
+                <li onclick="window.location.href='settings.html'">
+                    <i class="fa-solid fa-user-shield"></i>
+                    Manage Account
+                </li>
+
+                <li onclick="logout()">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    Logout
+                </li>
+
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+
+        <div class="main">
+
+            <div class="topbar">
+
+                <h1>Welcome, <span id="userName"></span> 👋</h1>
+
+                <div class="topbar-actions">
+                    <div class="notif-bell-container" style="position: relative;">
+                        <button id="notifBellBtn" class="topbar-icon-btn" title="Notifications">
+                            <i class="fa-solid fa-bell"></i>
+                            <span id="notifBadge" class="notif-badge">0</span>
+                        </button>
+
+                        <div id="notifDropdown" class="notif-dropdown">
+                            <div class="notif-header">
+                                <h3>Notifications</h3>
+                                <span id="markReadBtn"
+                                    style="cursor: pointer; font-size: 12px; color: #4f46e5; font-weight: 500;">Mark all
+                                    read</span>
+                            </div>
+                            <div id="notifDropdownList" class="notif-dropdown-list">
+                                <!-- Loaded dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="profileBtn" class="topbar-icon-btn topbar-avatar-btn" title="My Profile" onclick="window.location.href='profile.html'">
+                        <img id="topbarAvatar" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Profile" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                    </button>
+                </div>
+
+            </div>
+
+
+            <!-- Cards -->
+
+            <!-- Cards (Appointments & Therapists Only) -->
+            <div class="cards">
+                <div class="card">
+                    <i class="fa-solid fa-calendar-days"></i>
+                    <h2 id="appointmentCount">0</h2>
+                    <p>Upcoming Appointments</p>
+                </div>
+
+                <div class="card">
+                    <i class="fa-solid fa-user-doctor"></i>
+                    <h2 id="therapistCount">0</h2>
+                    <p>Consulted Therapists</p>
+                </div>
+            </div>
+
+            <!-- ================= UPCOMING APPOINTMENTS ================= -->
+            <!-- ================= UPCOMING APPOINTMENTS ================= -->
+            <div class="section appointments-section" style="margin-bottom: 35px;">
+                <div class="section-header">
+                    <div>
+                        <h2><i class="fa-solid fa-calendar-check" style="color: #4f46e5; margin-right: 8px;"></i> Upcoming Appointments</h2>
+                        <p class="section-desc">View and manage your active therapy consultations</p>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="styled-table">
+                        <thead>
+                            <tr>
+                                <th>Therapist</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Session Mode</th>
+                                <th style="text-align: right;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="upcomingAppointmentTable">
+                            <tr>
+                                <td colspan="5" style="text-align:center; padding:40px;">
+                                    <i class="fa-solid fa-spinner fa-spin" style="font-size: 24px; color: #4f46e5;"></i>
+                                    <p style="margin-top: 10px; color: #64748b;">Loading appointments...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ================= CANCELLED & MISSED APPOINTMENTS ================= -->
+            <div class="section appointments-section">
+                <div class="section-header">
+                    <div>
+                        <h2><i class="fa-solid fa-calendar-xmark" style="color: #ef4444; margin-right: 8px;"></i> Cancelled & Missed Appointments</h2>
+                        <p class="section-desc">History of your 5 most recent cancelled or missed therapy sessions</p>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="styled-table">
+                        <thead>
+                            <tr>
+                                <th>Therapist</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Session Mode</th>
+                                <th style="text-align: right;">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cancelledAppointmentTable">
+                            <tr>
+                                <td colspan="5" style="text-align:center; padding:30px;">
+                                    <p style="color: #64748b;">No cancelled or missed appointments</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="js/theme.js"></script>
+    <script src="js/dashboard.js"></script>
+
+</body>
+
+</html>

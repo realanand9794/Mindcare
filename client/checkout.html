@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Payment Gateway | MindCare</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+    <link rel="stylesheet" href="css/checkout.css">
+    <link rel="stylesheet" href="css/dark-theme.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="checkout-page">
+
+        <!-- Top Header -->
+        <header class="checkout-header">
+            <div class="header-content">
+                <a href="index.html" class="logo">
+                    <i class="fa-solid fa-heart-pulse"></i> MindCare
+                </a>
+                <span class="secure-badge">
+                    <i class="fa-solid fa-shield-halved"></i> 256-Bit SSL Encryption
+                </span>
+            </div>
+        </header>
+
+        <!-- Checkout Main Container -->
+        <main class="checkout-container">
+
+            <div class="checkout-grid">
+
+                <!-- Left Column: Streamlined Direct Payment Gateway -->
+                <div class="payment-methods-card">
+
+                    <h2><i class="fa-solid fa-shield-halved" style="color: #4f46e5; margin-right: 8px;"></i> Direct Payment Gateway</h2>
+                    <p class="subtitle">Fast 1-Click Instant Payment & Real-Time Consultation Confirmation.</p>
+
+                    <!-- Merchant Trust & Amount Summary Card -->
+                    <div style="background: linear-gradient(135deg, #0f172a, #1e293b); border: 1px solid #334155; padding: 24px; border-radius: 18px; color: #ffffff; margin-bottom: 24px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid #334155; padding-bottom: 14px;">
+                            <div>
+                                <span style="font-size: 12px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 2px;">Official Merchant Payee</span>
+                                <strong style="font-size: 17px; color: #a7f3d0;"><i class="fa-solid fa-circle-check" style="color: #34d399;"></i> ANAND PATEL</strong>
+                            </div>
+                            <div style="text-align: right;">
+                                <span style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 2px;">Consultation Fee</span>
+                                <strong style="font-size: 22px; color: #38bdf8;">₹999.00</strong>
+                            </div>
+                        </div>
+
+                        <!-- App Badges -->
+                        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                            <span style="font-size: 12px; color: #cbd5e1;"><i class="fa-solid fa-bolt" style="color: #facc15;"></i> Supported Instant Apps:</span>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                <span class="app-tag" style="background: #334155; color: #f8fafc; border: 1px solid #475569; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 500;"><i class="fa-solid fa-mobile-screen"></i> PhonePe</span>
+                                <span class="app-tag" style="background: #334155; color: #f8fafc; border: 1px solid #475569; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 500;"><i class="fa-solid fa-mobile-screen"></i> GPay</span>
+                                <span class="app-tag" style="background: #334155; color: #f8fafc; border: 1px solid #475569; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 500;"><i class="fa-solid fa-mobile-screen"></i> Paytm</span>
+                                <span class="app-tag" style="background: #334155; color: #f8fafc; border: 1px solid #475569; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 500;"><i class="fa-solid fa-mobile-screen"></i> UPI</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Direct Auto-Pay Primary Button -->
+                    <div style="margin-bottom: 20px;">
+                        <button type="button" id="payGatewayBtn" class="pay-submit-btn" style="background: linear-gradient(135deg, #5b21b6, #4f46e5); font-size: 16.5px; padding: 18px; border-radius: 16px; box-shadow: 0 10px 30px rgba(91, 33, 182, 0.45); cursor: pointer; width: 100%; border: none; color: #ffffff; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s ease;">
+                            <i class="fa-solid fa-bolt" style="color: #facc15; font-size: 20px;"></i> Pay ₹999 via PhonePe / GPay / Paytm
+                        </button>
+                    </div>
+
+                    <div class="payment-foot-info" style="font-size: 12.5px; color: #64748b; display: flex; align-items: center; gap: 8px; justify-content: center;">
+                        <i class="fa-solid fa-lock" style="color: #16a34a;"></i>
+                        100% Encrypted NPCI Payment • Real-Time Credit to <strong>ANAND PATEL</strong>
+                    </div>
+
+                </div>
+
+                <!-- Right Column: Order Summary -->
+                <div class="order-summary-card">
+                    <h3><i class="fa-solid fa-file-invoice-dollar" style="color: #4f46e5; margin-right: 8px;"></i> Booking Summary</h3>
+
+                    <div class="summary-therapist-box">
+                        <img id="summaryDocImg" src="https://randomuser.me/api/portraits/women/44.jpg" alt="Doctor Image">
+                        <div>
+                            <h4 id="summaryDocName">Dr. Sarah Wilson</h4>
+                            <p id="summaryDocSpec">Clinical Psychologist</p>
+                        </div>
+                    </div>
+
+                    <div class="summary-details">
+                        <div class="summary-row">
+                            <span><i class="fa-solid fa-calendar"></i> Date</span>
+                            <strong id="summaryDate">2026-08-20</strong>
+                        </div>
+                        <div class="summary-row">
+                            <span><i class="fa-solid fa-clock"></i> Time</span>
+                            <strong id="summaryTime">10:00 AM</strong>
+                        </div>
+                        <div class="summary-row">
+                            <span><i class="fa-solid fa-video"></i> Mode</span>
+                            <strong id="summaryMode">Video Call</strong>
+                        </div>
+                    </div>
+
+                    <div class="price-breakdown">
+                        <div class="price-row">
+                            <span>Therapist Fee</span>
+                            <span id="summaryFee">₹999</span>
+                        </div>
+                        <div class="price-row">
+                            <span>MindCare Platform Charge</span>
+                            <span>₹0 <small style="color: #16a34a;">(Waived)</small></span>
+                        </div>
+                        <div class="price-row">
+                            <span>GST / Tax</span>
+                            <span>Included</span>
+                        </div>
+                        <hr>
+                        <div class="price-row total-row">
+                            <span>Total Payable Amount</span>
+                            <strong id="summaryTotal">₹999</strong>
+                        </div>
+                    </div>
+
+                    <div class="cancel-policy">
+                        <i class="fa-solid fa-rotate-left"></i> Free cancellation up to 2 hours before session start time.
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- Real-Time Payment Gateway Processing & Receipt Modal -->
+    <div id="realtimePayModal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.92); backdrop-filter: blur(8px); z-index: 99999; align-items: center; justify-content: center; padding: 20px;">
+        <div style="background: #ffffff; width: 100%; max-width: 480px; border-radius: 24px; padding: 32px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.35); text-align: center; font-family: 'Poppins', sans-serif; position: relative;">
+            
+            <!-- Loading Stage Container -->
+            <div id="payLoadingStage">
+                <div style="position: relative; width: 90px; height: 90px; margin: 0 auto 20px;">
+                    <div style="width: 100%; height: 100%; border: 4px solid #e0e7ff; border-top-color: #5b21b6; border-radius: 50%; animation: spinPay 1s linear infinite;"></div>
+                    <i class="fa-solid fa-mobile-screen" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 32px; color: #5b21b6;"></i>
+                </div>
+                <h3 style="font-size: 20px; font-weight: 700; color: #0f172a; margin-bottom: 6px;">Verifying Real-Time Payment</h3>
+                <p style="font-size: 13.5px; color: #64748b; margin-bottom: 20px;">Connecting to PhonePe / NPCI Banking Network...</p>
+                
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 16px; border-radius: 14px; font-size: 13px; color: #334155; text-align: left;">
+                    <div id="payStep1" style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; color: #4f46e5; font-weight: 600;">
+                        <i class="fa-solid fa-spinner fa-spin" id="step1Icon"></i> <span>1. Initiating Gateway Handshake...</span>
+                    </div>
+                    <div id="payStep2" style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; color: #94a3b8;">
+                        <i class="fa-regular fa-circle" id="step2Icon"></i> <span>2. Verifying ₹999 Credit to ANAND PATEL...</span>
+                    </div>
+                    <div id="payStep3" style="display: flex; align-items: center; gap: 10px; color: #94a3b8;">
+                        <i class="fa-regular fa-circle" id="step3Icon"></i> <span>3. Confirming Therapy Session Booking...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Success Stage & Receipt Container -->
+            <div id="paySuccessStage" style="display: none;">
+                <div style="width: 76px; height: 76px; background: #dcfce7; color: #16a34a; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 38px; margin: 0 auto 16px; box-shadow: 0 10px 20px rgba(22, 163, 74, 0.2);">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <h3 style="font-size: 22px; font-weight: 700; color: #0f172a; margin-bottom: 4px;">Payment Credited Successfully!</h3>
+                <p style="font-size: 13px; color: #16a34a; font-weight: 600; margin-bottom: 20px;"><i class="fa-solid fa-circle-check"></i> ₹999 Received & Credited to ANAND PATEL</p>
+
+                <!-- Receipt Card -->
+                <div style="background: #f8fafc; border: 1px dashed #cbd5e1; padding: 18px; border-radius: 16px; text-align: left; margin-bottom: 24px; font-size: 13px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="color: #64748b;">Transaction UTR ID:</span>
+                        <strong id="recTxnId" style="color: #0f172a; font-family: monospace;">TXN_98765432</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="color: #64748b;">Credited To:</span>
+                        <strong style="color: #0f172a;">ANAND PATEL (9794401568-2@ybl)</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="color: #64748b;">Amount Paid:</span>
+                        <strong style="color: #16a34a; font-size: 14px;">₹999 (PAID)</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="color: #64748b;">Therapist:</span>
+                        <strong id="recDocName" style="color: #4f46e5;">Dr. David Smith</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: #64748b;">Session Time:</span>
+                        <strong id="recTimeSlot" style="color: #0f172a;">2026-08-20 at 10:00 AM</strong>
+                    </div>
+                </div>
+
+                <button type="button" id="proceedToApptsBtn" style="width: 100%; background: #4f46e5; color: #ffffff; border: none; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 8px 16px rgba(79, 70, 229, 0.3); transition: all 0.2s ease;">
+                    View My Confirmed Appointment <i class="fa-solid fa-arrow-right" style="margin-left: 6px;"></i>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- PhonePe & UPI Direct Payment Gateway Selection Modal -->
+    <div id="directGatewaySelectModal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.88); backdrop-filter: blur(8px); z-index: 999999; align-items: center; justify-content: center; padding: 20px;">
+        <div style="background: #ffffff; width: 100%; max-width: 440px; border-radius: 24px; padding: 28px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.35); text-align: left; font-family: 'Poppins', sans-serif; position: relative;">
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px;">
+                <div>
+                    <h3 style="font-size: 18px; font-weight: 700; color: #0f172a; margin: 0;">PhonePe / UPI Direct Payment</h3>
+                    <p style="font-size: 12px; color: #64748b; margin: 2px 0 0 0;">Payee: <strong>ANAND PATEL</strong> (9794401568-2@ybl)</p>
+                </div>
+                <button type="button" id="closeGatewaySelectBtn" style="background: #f1f5f9; border: none; width: 32px; height: 32px; border-radius: 50%; color: #64748b; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
+            </div>
+
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px; border-radius: 14px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <span style="font-size: 12px; color: #64748b; display: block;">Total Consultation Amount</span>
+                    <strong style="font-size: 20px; color: #5b21b6;">₹999.00</strong>
+                </div>
+                <span style="background: #dcfce7; color: #15803d; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px;">
+                    <i class="fa-solid fa-shield-check"></i> 100% Encrypted
+                </span>
+            </div>
+
+            <p style="font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 12px;">Select Payment App:</p>
+
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+                <button type="button" class="app-select-btn" data-app="PhonePe" style="display: flex; align-items: center; justify-content: space-between; background: #ffffff; border: 2px solid #5b21b6; padding: 12px 16px; border-radius: 14px; cursor: pointer; text-align: left; transition: all 0.2s ease;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 36px; height: 36px; background: #5b21b6; color: #ffffff; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px;">पे</div>
+                        <div>
+                            <strong style="font-size: 14px; color: #0f172a; display: block;">PhonePe Direct Auto-Pay</strong>
+                            <span style="font-size: 11.5px; color: #64748b;">Instant UPI PIN verification</span>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right" style="color: #5b21b6;"></i>
+                </button>
+
+                <button type="button" class="app-select-btn" data-app="Google Pay" style="display: flex; align-items: center; justify-content: space-between; background: #ffffff; border: 1px solid #cbd5e1; padding: 12px 16px; border-radius: 14px; cursor: pointer; text-align: left; transition: all 0.2s ease;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 36px; height: 36px; background: #ea4335; color: #ffffff; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px;">G</div>
+                        <div>
+                            <strong style="font-size: 14px; color: #0f172a; display: block;">Google Pay (GPay)</strong>
+                            <span style="font-size: 11.5px; color: #64748b;">UPI Direct Transfer</span>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right" style="color: #94a3b8;"></i>
+                </button>
+
+                <button type="button" class="app-select-btn" data-app="Paytm" style="display: flex; align-items: center; justify-content: space-between; background: #ffffff; border: 1px solid #cbd5e1; padding: 12px 16px; border-radius: 14px; cursor: pointer; text-align: left; transition: all 0.2s ease;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 36px; height: 36px; background: #00baf2; color: #ffffff; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px;">Pay</div>
+                        <div>
+                            <strong style="font-size: 14px; color: #0f172a; display: block;">Paytm UPI & Wallet</strong>
+                            <span style="font-size: 11.5px; color: #64748b;">Fast Checkout</span>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right" style="color: #94a3b8;"></i>
+                </button>
+            </div>
+
+            <p style="font-size: 11.5px; color: #94a3b8; text-align: center; margin: 0;">
+                <i class="fa-solid fa-lock"></i> Protected by NPCI 256-Bit SSL Encryption
+            </p>
+        </div>
+    </div>
+    <style>
+        @keyframes spinPay { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+
+    <script src="js/theme.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="js/checkout.js"></script>
+
+</body>
+
+</html>

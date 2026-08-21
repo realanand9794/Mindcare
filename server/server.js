@@ -1,0 +1,155 @@
+require("dotenv").config();
+
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const http = require("http");
+const { Server } = require("socket.io");
+const Message = require("./models/Message");
+
+const app = express();
+const server = http.createServer(app);
+
+const io = new Server(server, {
+    cors: {
+        origin: "*"
+    }
+});
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// MongoDB Connection
+mongoose.connect(process.env.MONGO_URI || "mongodb://127.0.0.1:27017/mindcare")
+    .then(() => {
+        console.log("MongoDB Connected Successfully");
+    })
+    .catch(err => {
+        console.error("MongoDB Connection Error:", err);
+    });
+
+// Health Test Route
+app.get("/", (req, res) => {
+    res.send("MindCare Backend API Running");
+});
+
+// ================= SOCKET.IO REAL-TIME CHAT =================
+
+io.on("connection", (socket) => {
+    console.log("User Connected:", socket.id);
+
+    // User room join
+    socket.on("joinUser", (userId) => {
+        if (!userId) return;
+        socket.join(userId);
+        console.log("User joined room:", userId);
+    });
+
+    // Private message handling & persistence
+    socket.on("privateMessage", async (data) => {
+        const { senderId, receiverId, message } = data;
+
+        if (!receiverId || !message) {
+            return;
+        }
+
+        try {
+            if (senderId && mongoose.Types.ObjectId.isValid(senderId) && mongoose.Types.ObjectId.isValid(receiverId)) {
+                await Message.create({
+                    sender: senderId,
+                    receiver: receiverId,
+                    message: message
+                });
+            }
+        } catch (err) {
+            console.error("Socket Message Save Error:", err.message);
+        }
+
+        // Emit to receiver room
+        io.to(receiverId).emit("privateMessage", {
+            senderId,
+            receiverId,
+            message: message,
+            timestamp: new Date()
+        });
+
+        // Check if receiver room has active listeners
+        const receiverRoom = io.sockets.adapter.rooms.get(receiverId);
+        const isReceiverOnline = receiverRoom && receiverRoom.size > 0;
+
+        // Auto-reply simulation if therapist is offline
+        if (!isReceiverOnline && senderId) {
+            setTimeout(async () => {
+                let replyText = "Thank you for your message. I am reviewing your notes and am here to support you!";
+                const lower = message.toLowerCase();
+
+                if (lower.includes("hi") || lower.includes("hello") || lower.includes("hey")) {
+                    replyText = "Hello! 👋 Thank you for messaging me. How can I assist you with your mental wellness today?";
+                } else if (lower.includes("stress") || lower.includes("anxious") || lower.includes("anxiety") || lower.includes("help")) {
+                    replyText = "I understand that you're going through a stressful moment. Try taking slow deep breaths. We will address this in our consultation!";
+                } else if (lower.includes("appointment") || lower.includes("session") || lower.includes("time")) {
+                    replyText = "I'm looking forward to our scheduled session! Feel free to leave any details you'd like us to focus on.";
+                } else if (lower.includes("thank")) {
+                    replyText = "You're very welcome! Take care of yourself and speak to you soon.";
+                }
+
+                try {
+                    if (mongoose.Types.ObjectId.isValid(senderId) && mongoose.Types.ObjectId.isValid(receiverId)) {
+                        await Message.create({
+                            sender: receiverId,
+                            receiver: senderId,
+                            message: replyText
+                        });
+                    }
+                } catch (e) {
+                    console.error("Auto-reply save error:", e.message);
+                }
+
+                io.to(senderId).emit("privateMessage", {
+                    senderId: receiverId,
+                    receiverId: senderId,
+                    message: replyText,
+                    timestamp: new Date()
+                });
+            }, 1200);
+        }
+    });
+
+    socket.on("disconnect", () => {
+        console.log("User Disconnected:", socket.id);
+    });
+
+});
+
+// Routes
+const authRoutes = require("./routes/authRoutes");
+const messageRoutes = require("./routes/messageRoutes");
+const appointmentRoutes = require("./routes/appointmentRoutes");
+const therapistRoutes = require("./routes/therapistRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
+
+app.use("/api/auth", authRoutes);
+app.use("/api/messages", messageRoutes);
+app.use("/api/appointment", appointmentRoutes);
+app.use("/api/therapists", therapistRoutes);
+app.use("/api/payment", paymentRoutes);
+
+// Global Error Handler
+app.use((err, req, res, next) => {
+    console.error("===== EXPRESS ERROR =====");
+    console.error(err.stack);
+
+    res.status(500).json({
+        success: false,
+        message: err.message
+    });
+});
+
+// Start Server
+const PORT = process.env.PORT || 5000;
+
+server.listen(PORT, () => {
+    console.log(`Server Running on Port ${PORT}`);
+});

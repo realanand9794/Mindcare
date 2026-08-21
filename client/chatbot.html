@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Mental Health & Website Assistant | MindCare</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/chatbot.css">
+    <link rel="stylesheet" href="css/dark-theme.css">
+</head>
+
+<body>
+
+    <!-- ================= CHATBOT ================= -->
+    <section class="chatbot-container">
+        <div class="chat-header">
+            <div class="chat-header-info">
+                <a href="index.html" class="chat-back-btn" title="Back to Home">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+                <div class="chat-header-avatar">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <div>
+                    <h2>MindCare AI Assistant</h2>
+                    <p>Your 24/7 intelligent guide for website assistance & emotional wellness.</p>
+                </div>
+            </div>
+            <div class="chat-header-actions">
+                <div class="chat-header-status">
+                    <span class="dot"></span> Online AI
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+            <div class="bot-message">
+                👋 Hello! I'm your <strong>MindCare AI Assistant</strong>.
+            </div>
+            <div class="bot-message">
+                I can help you <strong>book appointments</strong>, <strong>find certified therapists</strong>, <strong>explain MindCare features</strong>, or talk through <strong>stress, anxiety, and self-care</strong>. How can I support you today?
+            </div>
+        </div>
+
+        <!-- ================= QUICK SUGGESTIONS ================= -->
+        <div class="quick-suggestions" id="quickSuggestions">
+            <button class="chip-btn" onclick="sendQuickMessage('How do I book an appointment?')">📅 How to book appointment?</button>
+            <button class="chip-btn" onclick="sendQuickMessage('Who are the therapists?')">👨‍⚕️ View Therapists</button>
+            <button class="chip-btn" onclick="sendQuickMessage('What services do you offer?')">🧠 Services</button>
+            <button class="chip-btn" onclick="sendQuickMessage('How to use live chat?')">💬 Live Chat</button>
+            <button class="chip-btn" onclick="sendQuickMessage('Give me stress relief tips')">🧘 Stress Relief</button>
+            <button class="chip-btn" onclick="sendQuickMessage('How to contact support?')">📞 Contact</button>
+        </div>
+
+        <!-- ================= CHAT INPUT ================= -->
+        <div class="chat-input">
+            <button id="emojiBtn" title="Emoji">
+                <i class="fa-regular fa-face-smile"></i>
+            </button>
+
+            <input type="text" id="userInput" placeholder="Ask about MindCare, appointments, therapists, or how you feel...">
+
+            <button id="clearBtn" title="Clear Chat">
+                <i class="fa-solid fa-trash"></i>
+            </button>
+
+            <button id="sendBtn" title="Send">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+        </div>
+    </section>
+
+    <!-- ================= FOOTER ================= -->
+    <footer>
+        <p>© 2026 MindCare AI | Your Mental Wellness Companion ❤️</p>
+    </footer>
+
+    <script src="js/theme.js"></script>
+    <script src="js/chatbot.js"></script>
+</body>
+
+</html>

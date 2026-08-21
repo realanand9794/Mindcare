@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Solid Heart in #ff3b5c (exact navbar logo color) -->
+  <path fill="#ff3b5c" d="M256 448l-23.2-21.1C150.4 352.6 96 303.3 96 242.4C96 192.6 135 153.6 184.8 153.6c28.1 0 55.1 13.1 71.2 33.7c16.1-20.6 43.1-33.7 71.2-33.7C377 153.6 416 192.6 416 242.4c0 60.9-54.4 110.2-136.8 184.6L256 448z"/>
+  <!-- White ECG Heartbeat Line -->
+  <path d="M150 240h45l22-45l30 85l28-60l18 20h67" fill="none" stroke="#ffffff" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

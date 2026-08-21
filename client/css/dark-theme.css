@@ -1,0 +1,1173 @@
+/* MindCare Global Dark Theme Styles Across All Pages */
+html.dark,
+body.dark {
+    background-color: #0f172a !important;
+    color: #f8fafc !important;
+}
+
+/* Global text color inheritance to prevent un-styled dark text */
+body.dark strong,
+body.dark b {
+    color: #ffffff !important;
+}
+
+body.dark p,
+body.dark label {
+    color: #cbd5e1 !important;
+}
+
+body.dark h1,
+body.dark h2,
+body.dark h3,
+body.dark h4,
+body.dark h5,
+body.dark h6 {
+    color: #ffffff !important;
+}
+
+/* Page Wrappers, Cards, Headers & Sidebars */
+body.dark .main,
+body.dark .container,
+body.dark .filter-bar,
+body.dark .profile-card,
+body.dark .settings-card,
+body.dark .inbox-app,
+body.dark .chat-main,
+body.dark .chat-header,
+body.dark .input-area,
+body.dark .login-card,
+body.dark .contact-card,
+body.dark .success-wrapper,
+body.dark .video-container,
+body.dark .features,
+body.dark .therapists-preview,
+body.dark .testimonials {
+    background-color: #0f172a !important;
+    color: #f8fafc !important;
+}
+
+/* Navbar & Header Dark Theme */
+body.dark header {
+    background: rgba(15, 23, 42, 0.92) !important;
+    backdrop-filter: blur(15px) !important;
+    border-bottom: 1px solid #1e293b !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+}
+
+body.dark nav {
+    background: transparent !important;
+}
+
+body.dark .logo {
+    color: #ffffff !important;
+}
+
+body.dark .logo i {
+    color: #ff3b5c !important;
+}
+
+body.dark nav a,
+body.dark .nav-links a {
+    color: #cbd5e1 !important;
+}
+
+body.dark nav a:hover,
+body.dark .nav-links a:hover,
+body.dark .nav-links a.active {
+    color: #ffffff !important;
+}
+
+body.dark .menu-btn {
+    color: #ffffff !important;
+}
+
+@media (max-width: 768px) {
+    body.dark .nav-links {
+        background-color: #1e293b !important;
+        border-bottom: 1px solid #334155 !important;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
+    }
+}
+
+/* Links */
+body.dark a {
+    color: #818cf8;
+}
+
+/* Common Cards & Containers */
+body.dark .card,
+body.dark .section,
+body.dark .appointments-section,
+body.dark .therapist-card,
+body.dark .modal-card,
+body.dark .inbox-sidebar,
+body.dark .chat-box,
+body.dark .appointment-card,
+body.dark .contact-card,
+body.dark .login-card,
+body.dark .feature-card,
+body.dark .service-card,
+body.dark .testimonial-card {
+    background-color: #1e293b !important;
+    color: #f8fafc !important;
+    border: 1px solid #334155 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Inputs, Selects & Form Controls */
+body.dark input,
+body.dark select,
+body.dark textarea {
+    background-color: #334155 !important;
+    color: #ffffff !important;
+    border-color: #475569 !important;
+}
+
+body.dark input::placeholder,
+body.dark textarea::placeholder {
+    color: #94a3b8 !important;
+}
+
+body.dark #togglePassword,
+body.dark #togglePassword i {
+    color: #cbd5e1 !important;
+}
+
+/* Tables */
+body.dark table th,
+body.dark .styled-table th,
+body.dark .styled-table thead tr {
+    background-color: #334155 !important;
+    color: #f1f5f9 !important;
+}
+
+body.dark table td,
+body.dark .styled-table td,
+body.dark .styled-table tbody tr {
+    border-bottom-color: #334155 !important;
+    color: #e2e8f0 !important;
+}
+
+body.dark .styled-table tbody tr:hover {
+    background-color: #334155 !important;
+}
+
+/* Badges & Status Pills */
+body.dark .status-pill.confirmed {
+    background-color: #dcfce7 !important;
+    color: #15803d !important;
+}
+
+body.dark .status-pill.pending {
+    background-color: #fef3c7 !important;
+    color: #b45309 !important;
+}
+
+body.dark .status-pill.cancelled {
+    background-color: #fee2e2 !important;
+    color: #b91c1c !important;
+}
+
+body.dark .mode-badge {
+    background-color: #334155 !important;
+    color: #f1f5f9 !important;
+}
+
+body.dark .online-badge {
+    background-color: #dcfce7 !important;
+    color: #15803d !important;
+}
+
+body.dark .notif-badge {
+    background-color: #ef4444 !important;
+    color: #ffffff !important;
+}
+
+/* Buttons */
+body.dark .action-btn,
+body.dark .save-btn,
+body.dark .edit-btn,
+body.dark .book-new-btn,
+body.dark .btn-primary {
+    color: #ffffff !important;
+}
+
+body.dark .cancel-btn {
+    background-color: rgba(239, 68, 68, 0.18) !important;
+    color: #f87171 !important;
+    border: 1px solid rgba(239, 68, 68, 0.35) !important;
+}
+
+body.dark .cancel-btn:hover {
+    background-color: #ef4444 !important;
+    color: #ffffff !important;
+}
+
+/* Notifications & Toasts */
+body.dark .notif-dropdown,
+body.dark .notif-header,
+body.dark .toast-popup {
+    background-color: #1e293b !important;
+    color: #f8fafc !important;
+    border-color: #334155 !important;
+}
+
+body.dark .notif-header h3,
+body.dark .notif-item-text strong,
+body.dark .toast-content h4 {
+    color: #ffffff !important;
+}
+
+body.dark .notif-item-text,
+body.dark .toast-content p {
+    color: #cbd5e1 !important;
+}
+
+/* ==================================================
+   MY APPOINTMENTS PAGE (appointments.html) DARK MODE
+   ================================================== */
+
+body.dark .appointments-container {
+    background: transparent !important;
+}
+
+body.dark .page-title h2 {
+    color: #ffffff !important;
+}
+
+body.dark .appointment-card {
+    background-color: #1e293b !important;
+    border: 1px solid #334155 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
+}
+
+body.dark .appointment-header h3 {
+    color: #818cf8 !important;
+}
+
+body.dark .detail,
+body.dark .appointment-card .detail {
+    background: #0f172a !important;
+    border: 1px solid #334155 !important;
+}
+
+body.dark .detail span,
+body.dark .appointment-card .detail span {
+    color: #94a3b8 !important;
+}
+
+body.dark .detail strong,
+body.dark .appointment-card .detail strong {
+    color: #ffffff !important;
+}
+
+body.dark .detail i,
+body.dark .appointment-card .detail i {
+    color: #818cf8 !important;
+}
+
+body.dark .cancelled-text {
+    color: #f87171 !important;
+}
+
+/* Session Mode Action Buttons Dark Theme Fix */
+body.dark .session-action-btn,
+body.dark .session-action-btn * {
+    color: #ffffff !important;
+}
+
+body.dark .chat-action {
+    background-color: #6366f1 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4) !important;
+}
+
+body.dark .chat-action:hover {
+    background-color: #4f46e5 !important;
+    color: #ffffff !important;
+}
+
+body.dark .voice-action {
+    background-color: #10b981 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4) !important;
+}
+
+body.dark .voice-action:hover {
+    background-color: #059669 !important;
+    color: #ffffff !important;
+}
+
+body.dark .video-action {
+    background-color: #3b82f6 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4) !important;
+}
+
+body.dark .video-action:hover {
+    background-color: #2563eb !important;
+    color: #ffffff !important;
+}
+
+body.dark .audio-session-btn,
+body.dark .chat-session-btn,
+body.dark .video-session-btn,
+body.dark .join-btn {
+    color: #ffffff !important;
+}
+
+body.dark .empty {
+    background: #1e293b !important;
+    border: 1px solid #334155 !important;
+}
+
+body.dark .empty h3 {
+    color: #ffffff !important;
+}
+
+body.dark .empty p {
+    color: #cbd5e1 !important;
+}
+
+/* Book New Appointment Button Dark Theme Styling (Home & App) */
+#heroBookBtn,
+.btn.primary,
+body.dark #heroBookBtn,
+body.dark .btn.primary,
+body.dark .book-btn,
+body.dark .book-new-btn,
+body.dark .book-now {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+    color: #ffffff !important;
+    border: none !important;
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45) !important;
+}
+
+#heroBookBtn *,
+.btn.primary *,
+body.dark #heroBookBtn *,
+body.dark .btn.primary *,
+body.dark .book-btn *,
+body.dark .book-new-btn *,
+body.dark .book-now * {
+    color: #ffffff !important;
+}
+
+#heroBookBtn:hover,
+.btn.primary:hover,
+body.dark #heroBookBtn:hover,
+body.dark .btn.primary:hover,
+body.dark .book-btn:hover,
+body.dark .book-new-btn:hover,
+body.dark .book-now:hover {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
+    color: #ffffff !important;
+    transform: translateY(-3px) !important;
+    box-shadow: 0 10px 25px rgba(99, 102, 241, 0.6) !important;
+}
+
+/* ==================================================
+   BOOK APPOINTMENT PAGE (appointment.html) DARK MODE
+   ================================================== */
+
+body.dark .booking-card {
+    background-color: #1e293b !important;
+    border: 1px solid #334155 !important;
+    color: #f8fafc !important;
+}
+
+body.dark .doctor-info h3,
+body.dark .doctor-info h2,
+body.dark .doctor-info strong,
+body.dark .doctor-card h3,
+body.dark .booking-card h2,
+body.dark .booking-card h3,
+body.dark .booking-card strong {
+    color: #ffffff !important;
+}
+
+body.dark .doctor-info p,
+body.dark .doctor-spec,
+body.dark .fee-breakdown p,
+body.dark .fee-breakdown span {
+    color: #cbd5e1 !important;
+}
+
+body.dark .fee-box,
+body.dark .summary-box,
+body.dark .therapist-summary {
+    background: #0f172a !important;
+    border: 1px solid #334155 !important;
+    color: #ffffff !important;
+}
+
+body.dark .fee-box strong,
+body.dark .total-amount,
+body.dark .summary-box strong {
+    color: #818cf8 !important;
+}
+
+/* Date & Time Picker Calendar Icons Dark Mode High Contrast */
+body.dark input[type="date"]::-webkit-calendar-picker-indicator,
+body.dark input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(1) brightness(2) !important;
+    cursor: pointer;
+    opacity: 1 !important;
+}
+
+body.dark .input-group label i {
+    color: #818cf8 !important;
+}
+
+/* ==================================================
+   THERAPISTS PAGE (therapists.html) DARK MODE
+   ================================================== */
+
+body.dark .therapist-card h3,
+body.dark .therapist-card strong {
+    color: #ffffff !important;
+}
+
+body.dark .therapist-card p,
+body.dark .therapist-info span,
+body.dark .spec-tag,
+body.dark .exp-text {
+    color: #cbd5e1 !important;
+}
+
+body.dark .price-tag,
+body.dark .fee-text {
+    color: #818cf8 !important;
+}
+
+body.dark .search-filter-bar,
+body.dark .search-box,
+body.dark .filter-box {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+}
+
+/* ==================================================
+   DASHBOARD PAGE (dashboard.html) DARK MODE
+   ================================================== */
+
+body.dark .topbar {
+    background: #0f172a !important;
+    border-bottom: 1px solid #1e293b !important;
+}
+
+body.dark .sidebar {
+    background: #0f172a !important;
+    border-right: 1px solid #1e293b !important;
+}
+
+body.dark .sidebar a {
+    color: #cbd5e1 !important;
+}
+
+body.dark .sidebar a:hover,
+body.dark .sidebar a.active {
+    background: #1e293b !important;
+    color: #818cf8 !important;
+}
+
+body.dark .stat-card {
+    background: #1e293b !important;
+    border: 1px solid #334155 !important;
+}
+
+body.dark .stat-card h3,
+body.dark .stat-card .number {
+    color: #ffffff !important;
+}
+
+body.dark .stat-card p {
+    color: #cbd5e1 !important;
+}
+
+body.dark .table-container,
+body.dark .activity-list {
+    background: #1e293b !important;
+    border: 1px solid #334155 !important;
+}
+
+body.dark td,
+body.dark th,
+body.dark .therapist-cell span,
+body.dark .date-cell,
+body.dark .time-cell,
+body.dark .mode-cell {
+    color: #e2e8f0 !important;
+}
+
+/* ==================================================
+   SETTINGS & PROFILE PAGES DARK MODE
+   ================================================== */
+
+body.dark .settings-card,
+body.dark .profile-card {
+    background: #1e293b !important;
+    border: 1px solid #334155 !important;
+}
+
+body.dark .header-title h2,
+body.dark .section-sub,
+body.dark .profile-name,
+body.dark .info-row span,
+body.dark .info-row strong {
+    color: #ffffff !important;
+}
+
+body.dark .info-row label,
+body.dark .form-group label {
+    color: #cbd5e1 !important;
+}
+
+body.dark .read-only-field {
+    background: #0f172a !important;
+    color: #94a3b8 !important;
+    border-color: #334155 !important;
+}
+
+/* ==================================================
+   CONTACT PAGE (contact.html) DARK MODE
+   ================================================== */
+
+body.dark .contact-page h1,
+body.dark .contact-card h2,
+body.dark .info-item strong {
+    color: #ffffff !important;
+}
+
+body.dark .contact-subtitle,
+body.dark .info-item p {
+    color: #cbd5e1 !important;
+}
+
+body.dark .info-item i {
+    background: #334155 !important;
+    color: #818cf8 !important;
+}
+
+/* ==================================================
+   INDEX.HTML HOME PAGE SPECIFIC DARK THEME STYLES
+   ================================================== */
+
+/* Hero Section */
+body.dark .hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
+}
+
+body.dark .hero-content h1 {
+    color: #ffffff !important;
+}
+
+body.dark .hero-content span {
+    color: #818cf8 !important;
+}
+
+body.dark .hero-content p {
+    color: #cbd5e1 !important;
+}
+
+body.dark .btn.secondary {
+    background-color: #1e293b !important;
+    color: #818cf8 !important;
+    border: 1px solid #475569 !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
+}
+
+body.dark .btn.secondary:hover {
+    background-color: #334155 !important;
+    color: #ffffff !important;
+}
+
+/* Stats Section */
+body.dark .stats {
+    background: #0f172a !important;
+}
+
+body.dark .stat {
+    background: #1e293b !important;
+    border: 1px solid #334155 !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25) !important;
+}
+
+body.dark .stat h2 {
+    color: #818cf8 !important;
+}
+
+body.dark .stat p {
+    color: #cbd5e1 !important;
+}
+
+/* About Section */
+body.dark #about,
+body.dark .about {
+    background: #0f172a !important;
+}
+
+body.dark .about-text h3 {
+    color: #ffffff !important;
+}
+
+body.dark .about-text p {
+    color: #cbd5e1 !important;
+}
+
+body.dark .about-text ul li {
+    color: #e2e8f0 !important;
+}
+
+/* Services Section */
+body.dark #services {
+    background: #0b1329 !important;
+}
+
+body.dark .service-card {
+    background: #1e293b !important;
+    border: 1px solid #334155 !important;
+}
+
+body.dark .service-card i {
+    color: #818cf8 !important;
+}
+
+body.dark .service-card h3 {
+    color: #ffffff !important;
+}
+
+body.dark .service-card p {
+    color: #cbd5e1 !important;
+}
+
+body.dark .service-card:hover {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
+    box-shadow: 0 15px 35px rgba(79, 70, 229, 0.4) !important;
+}
+
+body.dark .service-card:hover i,
+body.dark .service-card:hover h3,
+body.dark .service-card:hover p {
+    color: #ffffff !important;
+}
+
+/* Therapists Section */
+body.dark #therapists {
+    background: #0f172a !important;
+}
+
+body.dark .therapist-card {
+    background: #1e293b !important;
+    border: 1px solid #334155 !important;
+}
+
+body.dark .therapist-card h3 {
+    color: #ffffff !important;
+}
+
+body.dark .therapist-spec {
+    color: #818cf8 !important;
+}
+
+body.dark .therapist-bio {
+    color: #cbd5e1 !important;
+}
+
+body.dark .therapist-card button {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
+    color: #ffffff !important;
+}
+
+body.dark .therapist-card button:hover {
+    box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4) !important;
+}
+
+/* Testimonials / Reviews Section */
+body.dark .testimonial {
+    background: #0b1329 !important;
+}
+
+body.dark .review {
+    background: #1e293b !important;
+    border: 1px solid #334155 !important;
+    color: #fbbf24 !important; /* Golden stars */
+}
+
+body.dark .review p {
+    color: #cbd5e1 !important;
+}
+
+body.dark .review h4 {
+    color: #818cf8 !important;
+}
+
+/* Call To Action (CTA) Section */
+body.dark .cta {
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%) !important;
+    border: 1px solid #4338ca !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5) !important;
+}
+
+body.dark .cta-badge {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    color: #a5b4fc !important;
+}
+
+body.dark .cta h2 {
+    color: #ffffff !important;
+}
+
+body.dark .cta-desc {
+    color: #cbd5e1 !important;
+}
+
+body.dark .cta-feature-item {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #e2e8f0 !important;
+}
+
+body.dark .cta-btn-ai {
+    background: #ffffff !important;
+    color: #3730a3 !important;
+    font-weight: 700 !important;
+}
+
+body.dark .cta-btn-ai:hover {
+    background: #f1f5f9 !important;
+    color: #1e1b4b !important;
+}
+
+body.dark .cta-btn-outline {
+    border-color: rgba(255, 255, 255, 0.6) !important;
+    color: #ffffff !important;
+}
+
+body.dark .cta-btn-outline:hover {
+    background: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Footer Section */
+body.dark footer,
+body.dark footer#contact {
+    background: #090d16 !important;
+    color: #cbd5e1 !important;
+    border-top: 1px solid #1e293b !important;
+}
+
+body.dark footer h2 {
+    color: #ffffff !important;
+}
+
+body.dark footer p {
+    color: #cbd5e1 !important;
+}
+
+body.dark footer p i {
+    color: #818cf8 !important;
+}
+
+body.dark .social i {
+    background: #1e293b !important;
+    color: #818cf8 !important;
+    border: 1px solid #334155 !important;
+}
+
+body.dark .social i:hover {
+    background: #4f46e5 !important;
+    color: #ffffff !important;
+    border-color: #4f46e5 !important;
+}
+
+body.dark .copyright {
+    color: #94a3b8 !important;
+}
+
+/* ==================================================
+   MY PROFILE PAGE (profile.html) DARK MODE COMPREHENSIVE
+   ================================================== */
+body.dark .profile-card {
+    background-color: #1e293b !important;
+    color: #f8fafc !important;
+    border: 1px solid #334155 !important;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4) !important;
+}
+
+body.dark .profile-card h1,
+body.dark .profile-card #fullName {
+    color: #ffffff !important;
+}
+
+body.dark .profile-card #email {
+    color: #94a3b8 !important;
+}
+
+body.dark .profile-card .info p {
+    background: #0f172a !important;
+    border: 1px solid #334155 !important;
+    color: #f8fafc !important;
+}
+
+body.dark .profile-card .info p strong {
+    color: #818cf8 !important;
+}
+
+body.dark .profile-card .info p span {
+    color: #ffffff !important;
+    font-weight: 500 !important;
+}
+
+body.dark .modal-card {
+    background-color: #1e293b !important;
+    color: #ffffff !important;
+    border: 1px solid #334155 !important;
+}
+
+body.dark .modal-card h2 {
+    color: #ffffff !important;
+}
+
+body.dark .modal-card label {
+    color: #cbd5e1 !important;
+}
+
+body.dark .modal-card input {
+    background-color: #0f172a !important;
+    color: #ffffff !important;
+    border-color: #475569 !important;
+}
+
+/* ==================================================
+   WHATSAPP LIVE CHAT DARK THEME
+   ================================================== */
+body.dark .whatsapp-app-container {
+    background-color: #0c1317 !important;
+}
+
+body.dark .whatsapp-sidebar {
+    background-color: #111b21 !important;
+    border-right-color: #222d34 !important;
+}
+
+body.dark .sidebar-header,
+body.dark .sidebar-search {
+    background-color: #202c33 !important;
+    border-bottom-color: #222d34 !important;
+}
+
+body.dark .header-user-info,
+body.dark .chat-item-top h4,
+body.dark .active-therapist-info h3 {
+    color: #e9edef !important;
+}
+
+body.dark .search-box {
+    background-color: #111b21 !important;
+}
+
+body.dark .search-box input {
+    color: #e9edef !important;
+}
+
+body.dark .chat-item {
+    border-bottom-color: #222d34 !important;
+}
+
+body.dark .chat-item:hover,
+body.dark .chat-item.active {
+    background-color: #2a3942 !important;
+}
+
+body.dark .whatsapp-chat-panel {
+    background-color: #0b141a !important;
+}
+
+body.dark .chat-header,
+body.dark .chat-footer {
+    background-color: #202c33 !important;
+    border-color: #222d34 !important;
+}
+
+body.dark .chat-messages-area {
+    background-color: #0b141a !important;
+    background-image: radial-gradient(#1f2c34 1px, transparent 1px) !important;
+}
+
+body.dark .msg-bubble.incoming {
+    background-color: #202c33 !important;
+    color: #e9edef !important;
+}
+
+body.dark .msg-bubble.outgoing {
+    background-color: #005c4b !important;
+    color: #e9edef !important;
+}
+
+body.dark .call-log-card {
+    background-color: #202c33 !important;
+    color: #e9edef !important;
+}
+
+body.dark .call-log-details h4 {
+    color: #e9edef !important;
+}
+
+body.dark .footer-input-form input {
+    background-color: #2a3942 !important;
+    color: #e9edef !important;
+}
+
+/* =========================================================
+   CHECKOUT & PAYMENT GATEWAY DARK THEME HIGH-CONTRAST STYLES
+   ========================================================= */
+
+body.dark .checkout-page,
+body.dark .payment-container {
+    background-color: #0f172a !important;
+    color: #f8fafc !important;
+}
+
+body.dark .checkout-header {
+    background: #1e293b !important;
+    border-bottom: 1px solid #334155 !important;
+}
+
+body.dark .payment-methods-card,
+body.dark .order-summary-card,
+body.dark .payment-container .left,
+body.dark .payment-container .right {
+    background-color: #1e293b !important;
+    border: 1px solid #334155 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
+    color: #f8fafc !important;
+}
+
+body.dark .payment-methods-card h2,
+body.dark .order-summary-card h3,
+body.dark .payment-container h2 {
+    color: #ffffff !important;
+}
+
+body.dark .subtitle {
+    color: #cbd5e1 !important;
+}
+
+body.dark .input-group label,
+body.dark .payment-container label {
+    color: #e2e8f0 !important;
+    font-weight: 500 !important;
+}
+
+body.dark .input-group input,
+body.dark .input-group select,
+body.dark .payment-form input,
+body.dark .payment-form select,
+body.dark .payment-container input,
+body.dark .payment-container textarea {
+    background-color: #0f172a !important;
+    color: #f8fafc !important;
+    border: 1px solid #475569 !important;
+}
+
+body.dark .input-group input::placeholder,
+body.dark .payment-container input::placeholder,
+body.dark .payment-container textarea::placeholder {
+    color: #94a3b8 !important;
+}
+
+body.dark .summary-therapist-box {
+    background-color: #0f172a !important;
+    border: 1px solid #334155 !important;
+}
+
+body.dark .summary-therapist-box h4 {
+    color: #ffffff !important;
+}
+
+body.dark .summary-therapist-box p {
+    color: #a5b4fc !important;
+}
+
+body.dark .summary-details .summary-row span,
+body.dark .price-breakdown .price-row span {
+    color: #cbd5e1 !important;
+}
+
+body.dark .summary-details .summary-row strong,
+body.dark .price-breakdown .price-row strong {
+    color: #ffffff !important;
+}
+
+body.dark .price-breakdown {
+    background-color: #0f172a !important;
+    border: 1px solid #334155 !important;
+}
+
+body.dark .price-breakdown .price-row {
+    color: #cbd5e1 !important;
+}
+
+body.dark .price-breakdown .total-row span {
+    color: #a5b4fc !important;
+}
+
+body.dark .price-breakdown .total-row strong {
+    color: #38bdf8 !important;
+}
+
+body.dark .price-breakdown hr {
+    border-color: #334155 !important;
+}
+
+body.dark .cancel-policy {
+    background-color: #0f172a !important;
+    color: #cbd5e1 !important;
+    border: 1px solid #334155 !important;
+}
+
+body.dark .payment-foot-info {
+    color: #cbd5e1 !important;
+    border-top-color: #334155 !important;
+}
+
+body.dark .payment-foot-info strong {
+    color: #ffffff !important;
+}
+
+/* Modal Dark Theme Adaptations */
+body.dark #realtimePayModal > div {
+    background-color: #1e293b !important;
+    border: 1px solid #334155 !important;
+    color: #f8fafc !important;
+}
+
+body.dark #realtimePayModal h3 {
+    color: #ffffff !important;
+}
+
+body.dark #realtimePayModal p {
+    color: #cbd5e1 !important;
+}
+
+body.dark #payLoadingStage > div:last-child,
+body.dark #paySuccessStage > div:nth-child(4) {
+    background-color: #0f172a !important;
+    border-color: #334155 !important;
+}
+
+body.dark #realtimePayModal strong {
+    color: #ffffff !important;
+}
+
+body.dark #recTxnId {
+    color: #38bdf8 !important;
+}
+
+/* Therapist Dashboard Dark Mode Adaptations */
+body.dark .therapist-portal-container {
+    background: #0f172a !important;
+}
+
+body.dark .portal-sidebar {
+    background: #1e293b !important;
+    border-right-color: #334155 !important;
+}
+
+body.dark .sidebar-logo {
+    color: #ffffff !important;
+}
+
+body.dark .sidebar-doctor-card {
+    background: #0f172a !important;
+    border-color: #334155 !important;
+}
+
+body.dark .sidebar-doctor-card h4 {
+    color: #ffffff !important;
+}
+
+body.dark .sidebar-doctor-card p {
+    color: #818cf8 !important;
+}
+
+body.dark .online-tag {
+    color: #34d399 !important;
+    background: #064e3b !important;
+}
+
+body.dark .menu-item {
+    color: #94a3b8 !important;
+}
+
+body.dark .menu-item:hover,
+body.dark .menu-item.active {
+    background: #312e81 !important;
+    color: #ffffff !important;
+}
+
+body.dark .sidebar-footer {
+    border-top-color: #334155 !important;
+}
+
+body.dark .logout-btn {
+    background: #334155 !important;
+    color: #f87171 !important;
+    border-color: #475569 !important;
+}
+
+body.dark .portal-topbar {
+    border-bottom-color: #1e293b !important;
+}
+
+body.dark .portal-topbar h2 {
+    color: #ffffff !important;
+}
+
+body.dark .welcome-sub {
+    color: #94a3b8 !important;
+}
+
+body.dark .role-badge {
+    background: #1e1b4b !important;
+    color: #818cf8 !important;
+    border-color: #3730a3 !important;
+}
+
+body.dark .doc-stat-card {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+}
+
+body.dark .doc-stat-card h3 {
+    color: #ffffff !important;
+}
+
+body.dark .table-card {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+}
+
+body.dark .card-header h3 {
+    color: #ffffff !important;
+}
+
+body.dark .patient-table th {
+    background: #0f172a !important;
+    color: #cbd5e1 !important;
+}
+
+body.dark .patient-table td {
+    border-bottom-color: #334155 !important;
+    color: #f8fafc !important;
+}
+
+body.dark .patient-table tr:hover {
+    background: #334155 !important;
+}
+
+body.dark .mark-complete-btn {
+    background: #064e3b !important;
+    color: #34d399 !important;
+    border-color: #059669 !important;
+}

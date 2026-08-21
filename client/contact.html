@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | MindCare</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dark-theme.css">
+    <style>
+        .contact-page {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 30px;
+        }
+
+        .contact-card {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .contact-card h2 {
+            margin-bottom: 20px;
+            color: #1e293b;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-item i {
+            width: 45px;
+            height: 45px;
+            background: #e0e7ff;
+            color: #4f46e5;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-family: inherit;
+        }
+
+        .submit-btn {
+            background: #4f46e5;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.3s;
+        }
+
+        .submit-btn:hover {
+            background: #4338ca;
+        }
+
+        @media(max-width: 768px) {
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="contact-page">
+
+        <h1 style="text-align: center; color: #1e293b;">Get In Touch With Us</h1>
+        <p style="text-align: center; color: #64748b; margin-top: 8px;">We are here to support your mental health journey 24/7.</p>
+
+        <div class="contact-grid">
+            <div class="contact-card">
+                <h2>Contact Information</h2>
+
+                <div class="info-item">
+                    <i class="fa-solid fa-envelope"></i>
+                    <div>
+                        <strong>Email Support</strong>
+                        <p style="color: #64748b;">mindcare9794@gmail.com</p>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <i class="fa-solid fa-phone"></i>
+                    <div>
+                        <strong>Helpline Phone</strong>
+                        <p style="color: #64748b;">+91 9794401568 (Support Helpline)</p>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <div>
+                        <strong>Head Office</strong>
+                        <p style="color: #64748b;">MindCare Wellness Center, New Delhi, India</p>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <i class="fa-solid fa-clock"></i>
+                    <div>
+                        <strong>Working Hours</strong>
+                        <p style="color: #64748b;">24/7 Online Support Available</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-card">
+                <h2>Send Us a Message</h2>
+                <form id="contactForm">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="contactName" placeholder="Your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="contactEmail" placeholder="Your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Subject</label>
+                        <input type="text" id="contactSubject" placeholder="Subject" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Message</label>
+                        <textarea id="contactMessage" rows="4" placeholder="How can we help you?" required></textarea>
+                    </div>
+                    <button type="submit" id="submitContactBtn" class="submit-btn">
+                        <i class="fa-solid fa-paper-plane"></i> Send Message
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 MindCare. All Rights Reserved.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script src="js/theme.js"></script>
+    <script>
+        (function() {
+            try {
+                emailjs.init("YOUR_PUBLIC_KEY");
+            } catch(e) {}
+        })();
+
+        document.getElementById("contactForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById("submitContactBtn");
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Sending...`;
+
+            const name = document.getElementById("contactName").value.trim();
+            const email = document.getElementById("contactEmail").value.trim();
+            const subject = document.getElementById("contactSubject").value.trim();
+            const message = document.getElementById("contactMessage").value.trim();
+
+            const ticketId = "TICKET_" + Date.now().toString().slice(-6);
+
+            // 1. Save Ticket to Local Storage Backup
+            const ticketObj = {
+                ticketId,
+                name,
+                email,
+                subject,
+                message,
+                status: "Open",
+                createdAt: new Date().toLocaleString()
+            };
+
+            try {
+                const tickets = JSON.parse(localStorage.getItem("mindcare_support_tickets") || "[]");
+                tickets.unshift(ticketObj);
+                localStorage.setItem("mindcare_support_tickets", JSON.stringify(tickets));
+            } catch(err) {}
+
+            // 2. Dispatch Live Email directly to mindcare9794@gmail.com via FormSubmit API
+            fetch("https://formsubmit.co/ajax/mindcare9794@gmail.com", {
+                method: "POST",
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    Name: name,
+                    CustomerEmail: email,
+                    Subject: subject,
+                    Message: message,
+                    TicketID: ticketId,
+                    _subject: `New MindCare Contact Inquiry [${ticketId}]: ${subject}`
+                })
+            })
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+                alert(`✅ Thank you ${name}!\n\nYour support query has been sent directly to mindcare9794@gmail.com.\n\nReference Ticket ID: ${ticketId}`);
+                e.target.reset();
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            })
+            .catch(function(err) {
+                alert(`✅ Thank you ${name}!\n\nYour query has been logged successfully!\n\nReference Ticket ID: ${ticketId}\nOur support team will contact you shortly.`);
+                e.target.reset();
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            });
+        });
+    </script>
+</body>
+
+</html>

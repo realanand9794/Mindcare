@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Therapist Login Portal | MindCare Doctor Network</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+    <link rel="stylesheet" href="css/therapist-login.css">
+    <link rel="stylesheet" href="css/dark-theme.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="therapist-login-page">
+
+        <div class="therapist-login-card">
+
+            <div class="portal-brand">
+                <i class="fa-solid fa-user-doctor"></i>
+                <h2>MindCare Doctor Portal</h2>
+                <p>Therapist Consultation & Patient Management System</p>
+            </div>
+
+            <form id="therapistLoginForm">
+                <div class="input-group">
+                    <label>Doctor Email</label>
+                    <input type="email" id="therapistEmail" placeholder="e.g. dr.sarah@mindcare.com" required>
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="therapistPassword" placeholder="Enter password" required>
+                </div>
+
+                <button type="submit" class="therapist-submit-btn">
+                    <i class="fa-solid fa-right-to-bracket"></i> Login to Therapist Dashboard
+                </button>
+            </form>
+
+            <div class="card-footer-info">
+                <p><i class="fa-solid fa-shield-halved"></i> 256-Bit Encrypted Doctor Portal</p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="js/theme.js"></script>
+    <script src="js/therapist-login.js"></script>
+
+</body>
+
+</html>

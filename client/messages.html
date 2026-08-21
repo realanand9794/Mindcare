@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Therapist Inbox & Chat | MindCare</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="css/messages.css">
+    <script>
+        // Redirect messages page to WhatsApp live-chat consultation suite
+        window.location.replace("live-chat.html" + window.location.search);
+    </script>
+</head>
+
+<body>
+
+    <div class="inbox-app">
+
+        <!-- Left Pane: Therapists Inbox List -->
+        <div class="inbox-sidebar">
+            <div class="sidebar-header">
+                <a href="dashboard.html" class="back-home-btn" title="Back to Dashboard">
+                    <i class="fa-solid fa-house"></i>
+                </a>
+                <h2>Therapists Chat</h2>
+            </div>
+
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchTherapistInput" placeholder="Search therapist...">
+            </div>
+
+            <div class="therapist-list" id="therapistList">
+                <div class="list-loading">
+                    <i class="fa-solid fa-spinner fa-spin"></i> Loading therapists...
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Pane: Active Chat Window -->
+        <div class="chat-main">
+            <!-- Active Header -->
+            <div class="chat-header" id="chatHeader">
+                <div class="therapist-profile">
+                    <div class="avatar-wrapper">
+                        <img id="therapistImage" src="https://randomuser.me/api/portraits/women/44.jpg" alt="Therapist">
+                        <span class="status-dot"></span>
+                    </div>
+                    <div class="therapist-details">
+                        <h2 id="therapistName">Select a Therapist</h2>
+                        <div class="spec-badge">
+                            <i class="fa-solid fa-stethoscope"></i>
+                            <span id="therapistSpecialization">Certified Specialist</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="header-actions" style="display: flex; align-items: center; gap: 10px;">
+                    <span class="online-badge">🟢 Online</span>
+                    <div id="headerSessionAction"></div>
+                </div>
+            </div>
+
+            <!-- Messages Area -->
+            <div class="chat-box" id="chatBox">
+                <div class="chat-start-notice">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    End-to-end encrypted session with your therapist.
+                </div>
+            </div>
+
+            <!-- Empty State Container (shown if no therapist selected) -->
+            <div class="empty-chat-state" id="emptyState" style="display: none;">
+                <i class="fa-solid fa-comments"></i>
+                <h3>No Active Therapist Chat Selected</h3>
+                <p>Select a therapist from the left list or book an appointment to start consulting.</p>
+                <a href="therapists.html" class="browse-btn">
+                    <i class="fa-solid fa-user-doctor"></i> Browse Therapists
+                </a>
+            </div>
+
+            <!-- Input Area -->
+            <div class="input-area" id="inputArea">
+                <input type="text" id="message" placeholder="Type your message here..." autocomplete="off">
+                <button id="sendBtn">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    Send
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="http://localhost:5000/socket.io/socket.io.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/messages.js"></script>
+</body>
+
+</html>

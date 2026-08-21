@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Live Consultation Chat | MindCare Therapist Portal</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+    <link rel="stylesheet" href="css/therapist-chat.css">
+    <link rel="stylesheet" href="css/dark-theme.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="doctor-chat-app">
+
+        <!-- Top Header Bar for Doctor -->
+        <header class="doc-chat-header">
+            <div class="header-left">
+                <div class="patient-header-card">
+                    <img id="patientAvatar" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Patient Avatar">
+                    <div class="patient-meta">
+                        <h3 id="patientNameTitle">Patient: Aarav Sharma</h3>
+                        <p id="patientConcernTag"><i class="fa-solid fa-notes-medical"></i> Concern: Anxiety & Stress</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="header-right" style="display: flex; align-items: center; gap: 12px;">
+                <span class="doctor-identity-badge">
+                    <i class="fa-solid fa-user-doctor"></i> Logged in as: <strong id="loggedDoctorName">Dr. Sarah Wilson</strong>
+                </span>
+                <span class="session-live-tag">● Live Session Active</span>
+                <button id="docCompleteSessionBtn" class="doc-complete-btn" style="background: #059669; color: #ffffff; border: none; border-radius: 8px; padding: 7px 14px; font-weight: 600; font-size: 12.5px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);">
+                    <i class="fa-solid fa-circle-check"></i> Complete Session
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Doctor Consultation Chat Stream -->
+        <main class="doc-chat-body" id="docChatMessagesArea">
+            <div class="encryption-notice">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>Private 1-on-1 Doctor-Patient Consultation. All advice and notes are encrypted & confidential.</span>
+            </div>
+            <!-- Messages stream renders dynamically -->
+        </main>
+
+        <!-- Doctor Message & Clinical Note Input Bar -->
+        <footer class="doc-chat-footer">
+            <form id="docMessageForm" class="doc-input-form">
+                <input type="text" id="docMessageInput" placeholder="Type medical advice, response, or treatment instructions..." autocomplete="off">
+                <button type="submit" class="doc-send-btn">
+                    <i class="fa-solid fa-paper-plane"></i> Send to Patient
+                </button>
+            </form>
+        </footer>
+
+    </div>
+
+    <script src="js/theme.js"></script>
+    <script src="js/therapist-chat.js"></script>
+
+</body>
+
+</html>

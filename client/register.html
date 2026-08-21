@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | MindCare</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="css/dark-theme.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="login-card">
+
+<div class="logo">
+
+<i class="fa-solid fa-heart-pulse"></i>
+
+<h2>MindCare</h2>
+
+</div>
+
+<h1>Create Account</h1>
+
+<p>Join MindCare and start your wellness journey.</p>
+
+<form id="registerForm">
+
+<div class="input-box">
+
+<i class="fa-solid fa-user"></i>
+
+<input type="text"
+id="fullName"
+placeholder="Full Name"
+required>
+
+</div>
+
+<div class="input-box">
+
+<i class="fa-solid fa-envelope"></i>
+
+<input type="email"
+id="email"
+placeholder="Email Address"
+required>
+
+</div>
+
+<div class="input-box">
+
+<i class="fa-solid fa-phone"></i>
+
+<input type="tel"
+id="phone"
+placeholder="Mobile Number"
+required>
+
+</div>
+
+<div class="input-box">
+
+<i class="fa-solid fa-venus-mars"></i>
+
+<select id="gender" required style="width:100%;padding:14px 45px;border:none;border-radius:12px;outline:none;">
+<option value="">Select Gender</option>
+<option>Male</option>
+<option>Female</option>
+<option>Other</option>
+</select>
+
+</div>
+
+<div class="input-box">
+
+<i class="fa-solid fa-lock"></i>
+
+<input
+    type="number"
+    id="age"
+    placeholder="Age"
+    min="1"
+    max="120"
+    required>
+
+<span id="togglePassword">
+
+<i class="fa-solid fa-eye"></i>
+
+</span>
+
+</div>
+
+<div class="input-box">
+
+<i class="fa-solid fa-lock"></i>
+
+<input type="password"
+id="password"
+placeholder="Enter Password"
+required>
+
+</div>
+
+<div class="input-box">
+    <i class="fa-solid fa-lock"></i>
+
+    <input
+        type="password"
+        id="confirmPassword"
+        placeholder="Confirm Password"
+        required>
+</div>
+
+<div class="options">
+
+<label>
+
+<input type="checkbox"
+required>
+
+I agree to the Terms & Conditions
+
+</label>
+
+</div>
+
+<button
+type="submit"
+class="login-btn">
+
+Create Account
+
+</button>
+
+</form>
+
+<p class="register">
+
+Already have an account?
+
+<a href="login.html">
+
+Login
+
+</a>
+
+</p>
+
+<a href="index.html"
+class="back-home">
+
+<i class="fa-solid fa-arrow-left"></i>
+
+Back to Home
+
+</a>
+
+</div>
+
+</div>
+
+<script src="js/theme.js"></script>
+<script src="js/register.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,398 @@
+/*====================================
+Google Font
+====================================*/
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    background:#f5f7fb;
+    color:#333;
+}
+
+/*====================================
+Header
+====================================*/
+
+header{
+    width:100%;
+    position:fixed;
+    top:0;
+    left:0;
+    background:#fff;
+    box-shadow:0 3px 15px rgba(0,0,0,.08);
+    z-index:1000;
+}
+
+nav{
+    width:90%;
+    margin:auto;
+    height:75px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.logo{
+    font-size:28px;
+    font-weight:700;
+    color:#4f46e5;
+}
+
+.logo i{
+    color:#ff4d6d;
+}
+
+nav ul{
+    display:flex;
+    list-style:none;
+    gap:25px;
+}
+
+nav ul li a{
+    text-decoration:none;
+    color:#333;
+    font-weight:500;
+    transition:.3s;
+}
+
+nav ul li a:hover{
+    color:#4f46e5;
+}
+
+/*====================================
+Payment Layout
+====================================*/
+
+.payment-container{
+    width:90%;
+    margin:120px auto 50px;
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:30px;
+}
+
+.left,
+.right{
+    background:#fff;
+    padding:30px;
+    border-radius:18px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+.left h2,
+.right h2{
+    color:#4f46e5;
+    margin-bottom:20px;
+}
+
+/*====================================
+Form
+====================================*/
+
+form{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+form input,
+form textarea{
+    width:100%;
+    padding:14px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    outline:none;
+    font-size:15px;
+}
+
+form textarea{
+    min-height:120px;
+    resize:none;
+}
+
+form input:focus,
+form textarea:focus{
+    border-color:#4f46e5;
+}
+
+/*====================================
+Coupon
+====================================*/
+
+.coupon{
+    display:flex;
+    gap:10px;
+    margin:20px 0;
+}
+
+.coupon input{
+    flex:1;
+    padding:12px;
+    border:1px solid #ddd;
+    border-radius:10px;
+}
+
+.coupon button{
+    background:#4f46e5;
+    color:#fff;
+    border:none;
+    padding:12px 20px;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+.coupon button:hover{
+    background:#3730a3;
+}
+
+/*====================================
+Payment Methods
+====================================*/
+
+.methods{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.methods label{
+    background:#f8f9ff;
+    padding:15px;
+    border-radius:10px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.methods label:hover{
+    background:#eef2ff;
+}
+
+.methods input{
+    margin-right:10px;
+}
+
+/*====================================
+Order Summary
+====================================*/
+
+.summary div{
+    display:flex;
+    justify-content:space-between;
+    margin:15px 0;
+}
+
+.summary hr{
+    margin:20px 0;
+}
+
+.total{
+    font-size:20px;
+    font-weight:700;
+}
+
+#payBtn{
+    width:100%;
+    margin-top:25px;
+    padding:15px;
+    border:none;
+    border-radius:12px;
+    background:#4f46e5;
+    color:#fff;
+    font-size:17px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+#payBtn:hover{
+    background:#3730a3;
+}
+/*====================================
+Security Section
+====================================*/
+
+.security{
+    width:90%;
+    margin:40px auto;
+}
+
+.security-card{
+    background:#ffffff;
+    text-align:center;
+    padding:40px;
+    border-radius:18px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+.security-card i{
+    font-size:50px;
+    color:#22c55e;
+    margin-bottom:20px;
+}
+
+.security-card h3{
+    color:#4f46e5;
+    margin-bottom:15px;
+}
+
+.security-card p{
+    color:#666;
+    line-height:1.8;
+}
+
+/*====================================
+Benefits
+====================================*/
+
+.benefits{
+    width:90%;
+    margin:40px auto;
+}
+
+.benefits h2{
+    text-align:center;
+    color:#4f46e5;
+    margin-bottom:30px;
+}
+
+.benefit-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:25px;
+}
+
+.benefit-card{
+    background:#fff;
+    text-align:center;
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+    transition:.3s;
+}
+
+.benefit-card:hover{
+    transform:translateY(-8px);
+}
+
+.benefit-card i{
+    font-size:40px;
+    color:#4f46e5;
+    margin-bottom:15px;
+}
+
+.benefit-card h3{
+    margin-bottom:12px;
+}
+
+.benefit-card p{
+    color:#666;
+    line-height:1.7;
+}
+
+/*====================================
+Support
+====================================*/
+
+.support{
+    width:90%;
+    margin:40px auto;
+    background:#ffffff;
+    text-align:center;
+    padding:35px;
+    border-radius:18px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+.support h2{
+    color:#4f46e5;
+    margin-bottom:15px;
+}
+
+.support p{
+    margin:10px 0;
+    color:#555;
+}
+
+/*====================================
+Footer
+====================================*/
+
+footer{
+    background:#111827;
+    color:#fff;
+    text-align:center;
+    padding:20px;
+    margin-top:40px;
+}
+
+/*====================================
+Responsive
+====================================*/
+
+@media(max-width:992px){
+
+.payment-container{
+    grid-template-columns:1fr;
+}
+
+}
+
+@media(max-width:768px){
+
+nav{
+    flex-direction:column;
+    height:auto;
+    padding:15px 0;
+}
+
+nav ul{
+    flex-direction:column;
+    gap:15px;
+    margin-top:15px;
+}
+
+.payment-container{
+    width:95%;
+}
+
+.left,
+.right{
+    padding:20px;
+}
+
+.coupon{
+    flex-direction:column;
+}
+
+.coupon button{
+    width:100%;
+}
+
+}
+
+@media(max-width:480px){
+
+.logo{
+    font-size:22px;
+}
+
+.left h2,
+.right h2{
+    font-size:22px;
+}
+
+#payBtn{
+    font-size:15px;
+}
+
+.security-card,
+.support{
+    padding:20px;
+}
+
+}

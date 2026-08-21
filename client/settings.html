@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Account & Password | MindCare</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="css/dark-theme.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #f8fafc;
+            color: #1e293b;
+            padding: 20px;
+        }
+
+        .settings-card {
+            max-width: 620px;
+            margin: 40px auto;
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .header-title i {
+            font-size: 24px;
+            color: #4f46e5;
+        }
+
+        .header-title h2 {
+            font-size: 20px;
+            color: #0f172a;
+        }
+
+        .section-sub {
+            font-size: 15px;
+            font-weight: 600;
+            color: #334155;
+            margin: 20px 0 12px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-sub i {
+            color: #4f46e5;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #475569;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .read-only-field {
+            background: #f1f5f9;
+            cursor: not-allowed;
+            color: #64748b;
+        }
+
+        .save-btn {
+            background: #4f46e5;
+            color: #ffffff;
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 15px;
+            transition: 0.2s;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .save-btn:hover {
+            background: #4338ca;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 22px;
+            color: #64748b;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            color: #4f46e5;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="settings-card">
+        <div class="header-title">
+            <i class="fa-solid fa-user-shield"></i>
+            <h2>Manage Account & Password</h2>
+        </div>
+
+        <form id="settingsForm">
+            <!-- Account Details -->
+            <div class="section-sub">
+                <i class="fa-solid fa-user"></i> Account Info
+            </div>
+
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="email" class="read-only-field" readonly>
+            </div>
+
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" id="phone" placeholder="Enter phone number">
+            </div>
+
+            <div class="form-group">
+                <label>Gender</label>
+                <select id="gender">
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <!-- Password Change Section -->
+            <div class="section-sub" style="margin-top: 28px;">
+                <i class="fa-solid fa-lock"></i> Security & Change Password
+            </div>
+
+            <div class="form-group">
+                <label>Current Password</label>
+                <input type="password" id="currentPassword" placeholder="Enter current password for verification">
+            </div>
+
+            <div class="form-group">
+                <label>New Password</label>
+                <input type="password" id="newPassword" placeholder="Enter new password (min. 6 characters)">
+            </div>
+
+            <div class="form-group">
+                <label>Confirm New Password</label>
+                <input type="password" id="confirmPassword" placeholder="Re-enter new password">
+            </div>
+
+            <button type="submit" class="save-btn">
+                <i class="fa-solid fa-floppy-disk"></i> Update Account & Password
+            </button>
+        </form>
+    </div>
+
+    <script src="js/theme.js"></script>
+    <script src="js/settings.js"></script>
+</body>
+
+</html>
