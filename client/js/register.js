@@ -21,7 +21,7 @@ if (form) {
         const age = document.getElementById("age").value;
 
         try {
-            const response = await fetch("http://localhost:5000/api/auth/register", {
+            const response = await fetch("https://mindcare-1-r9a5.onrender.com/api/auth/register", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

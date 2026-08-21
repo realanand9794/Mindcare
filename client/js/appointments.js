@@ -190,7 +190,7 @@ async function loadAppointments() {
 
     // 1. Attempt API Fetch from Backend
     try {
-        const response = await fetch("http://localhost:5000/api/appointment/my", {
+        const response = await fetch("https://mindcare-1-r9a5.onrender.com/api/appointment/my", {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${token}`
@@ -401,7 +401,7 @@ async function cancelAppointment(id) {
     // Try API
     const token = localStorage.getItem("token") || localStorage.getItem("user");
     try {
-        await fetch(`http://localhost:5000/api/appointment/cancel/${id}`, {
+        await fetch(`https://mindcare-1-r9a5.onrender.com/api/appointment/cancel/${id}`, {
             method: "PUT",
             headers: { "Authorization": `Bearer ${token}` }
         });

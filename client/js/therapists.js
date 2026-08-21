@@ -46,7 +46,7 @@ async function loadTherapists() {
     container.innerHTML = `<p style="text-align:center; padding: 20px;">Loading therapists...</p>`;
 
     try {
-        const response = await fetch("http://localhost:5000/api/therapists");
+        const response = await fetch("https://mindcare-1-r9a5.onrender.com/api/therapists");
         const data = await response.json();
 
         if (data.success && data.therapists && data.therapists.length > 0) {

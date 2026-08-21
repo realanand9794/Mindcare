@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Fetch fresh user profile from backend
     try {
-        const response = await fetch("http://localhost:5000/api/auth/me", {
+        const response = await fetch("https://mindcare-1-r9a5.onrender.com/api/auth/me", {
             headers: {
                 "Authorization": `Bearer ${token}`
             }
@@ -55,7 +55,7 @@ document.getElementById("settingsForm").addEventListener("submit", async (e) => 
     }
 
     try {
-        const response = await fetch("http://localhost:5000/api/auth/profile", {
+        const response = await fetch("https://mindcare-1-r9a5.onrender.com/api/auth/profile", {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",

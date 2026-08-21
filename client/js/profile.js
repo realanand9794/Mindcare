@@ -64,7 +64,7 @@ renderProfile(user);
 // Fetch fresh profile from API
 async function fetchFreshProfile() {
     try {
-        const response = await fetch("http://localhost:5000/api/auth/me", {
+        const response = await fetch("https://mindcare-1-r9a5.onrender.com/api/auth/me", {
             headers: {
                 "Authorization": `Bearer ${token}`
             }
@@ -155,7 +155,7 @@ if (editProfileForm) {
         }
 
         try {
-            const res = await fetch("http://localhost:5000/api/auth/profile", {
+            const res = await fetch("https://mindcare-1-r9a5.onrender.com/api/auth/profile", {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",

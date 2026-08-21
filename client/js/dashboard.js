@@ -240,7 +240,7 @@ async function loadAppointments() {
 
     // 1. Try Backend API
     try {
-        const response = await fetch("http://localhost:5000/api/appointment/my", {
+        const response = await fetch("https://mindcare-1-r9a5.onrender.com/api/appointment/my", {
             method: "GET",
             headers: { "Authorization": `Bearer ${token}` }
         });
@@ -476,7 +476,7 @@ async function loadAppointments() {
 // ================= LOAD MESSAGES STATS =================
 async function loadMessagesStats() {
     try {
-        const res = await fetch("http://localhost:5000/api/messages/my", {
+        const res = await fetch("https://mindcare-1-r9a5.onrender.com/api/messages/my", {
             headers: { "Authorization": `Bearer ${token}` }
         });
         const data = await res.json();
@@ -763,7 +763,7 @@ async function cancelAppointment(id) {
 
     // Attempt API Call
     try {
-        await fetch(`http://localhost:5000/api/appointment/cancel/${id}`, {
+        await fetch(`https://mindcare-1-r9a5.onrender.com/api/appointment/cancel/${id}`, {
             method: "PUT",
             headers: { "Authorization": `Bearer ${token}` }
         });

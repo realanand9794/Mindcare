@@ -37,7 +37,7 @@ const params = new URLSearchParams(window.location.search);
 let targetTherapistId = params.get("therapistId") || localStorage.getItem("therapistId");
 
 // Socket Setup
-const socket = io("http://localhost:5000");
+const socket = io("https://mindcare-1-r9a5.onrender.com");
 
 socket.on("connect", () => {
     console.log("Socket Connected:", socket.id);
@@ -109,7 +109,7 @@ async function loadTherapistsInbox() {
     // 1. Fetch user booked appointments from API if available
     let allUserAppointments = [...userBookedAppts];
     try {
-        const res = await fetch("http://localhost:5000/api/appointment/my", {
+        const res = await fetch("https://mindcare-1-r9a5.onrender.com/api/appointment/my", {
             headers: { "Authorization": `Bearer ${token}` }
         });
         const data = await res.json();
@@ -348,7 +348,7 @@ async function loadChatHistory(tId, tName) {
     let loadedFromApi = false;
 
     try {
-        const res = await fetch(`http://localhost:5000/api/messages/conversation/${tId}`, {
+        const res = await fetch(`https://mindcare-1-r9a5.onrender.com/api/messages/conversation/${tId}`, {
             headers: { "Authorization": `Bearer ${token}` }
         });
         const data = await res.json();
