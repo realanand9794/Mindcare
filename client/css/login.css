@@ -16,14 +16,15 @@ body{
     align-items:center;
     min-height:100vh;
     background:radial-gradient(circle at top left, #312e81, #0f172a 60%, #090d16);
-    overflow:hidden;
+    overflow-y:auto;
+    overflow-x:hidden;
     position:relative;
 }
 
 /* Background Glowing Orbs */
 body::before{
     content:"";
-    position:absolute;
+    position:fixed;
     width:300px;
     height:300px;
     background:radial-gradient(circle, rgba(99,102,241,0.3), transparent 70%);
@@ -31,11 +32,12 @@ body::before{
     left:15%;
     border-radius:50%;
     filter:blur(60px);
+    pointer-events:none;
 }
 
 body::after{
     content:"";
-    position:absolute;
+    position:fixed;
     width:350px;
     height:350px;
     background:radial-gradient(circle, rgba(168,85,247,0.25), transparent 70%);
@@ -43,6 +45,7 @@ body::after{
     right:15%;
     border-radius:50%;
     filter:blur(60px);
+    pointer-events:none;
 }
 
 /*==========================
@@ -51,10 +54,11 @@ Container & Glass Card
 
 .container{
     width:100%;
+    min-height:100vh;
     display:flex;
     justify-content:center;
     align-items:center;
-    padding:20px;
+    padding:40px 20px;
     z-index:2;
 }
 
@@ -136,7 +140,8 @@ Input Fields
     pointer-events:none;
 }
 
-.input-box input{
+.input-box input,
+.input-box select{
     width:100%;
     padding:14px 45px 14px 45px;
     border:1px solid rgba(255,255,255,0.15);
@@ -148,11 +153,17 @@ Input Fields
     transition:all 0.25s ease;
 }
 
+.input-box select option {
+    background-color: #0f172a;
+    color: #ffffff;
+}
+
 .input-box input::placeholder{
     color:#64748b;
 }
 
-.input-box input:focus{
+.input-box input:focus,
+.input-box select:focus{
     border-color:#6366f1;
     background:rgba(15,23,42,0.85);
     box-shadow:0 0 0 4px rgba(99,102,241,0.2);
