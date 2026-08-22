@@ -188,17 +188,25 @@ async function loadAppointments() {
 
     let apiAppts = [];
 
-    // 1. Attempt API Fetch from Backend
+    // 1. Attempt API Fetch from Backend (Local & Live Render Server)
+    try {
+        const resLocal = await fetch("/api/appointment/my", {
+            headers: token ? { "Authorization": `Bearer ${token}` } : {}
+        });
+        const dataLocal = await resLocal.json();
+        if (dataLocal.success && Array.isArray(dataLocal.appointments)) {
+            apiAppts.push(...dataLocal.appointments);
+        }
+    } catch (e) {}
+
     try {
         const response = await fetch("https://mindcare-1-r9a5.onrender.com/api/appointment/my", {
             method: "GET",
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }
+            headers: token ? { "Authorization": `Bearer ${token}` } : {}
         });
         const data = await response.json();
         if (data.success && Array.isArray(data.appointments)) {
-            apiAppts = data.appointments;
+            apiAppts.push(...data.appointments);
         }
     } catch (err) {
         console.warn("Backend API offline or failed, loading local appointments fallback:", err);

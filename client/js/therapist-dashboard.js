@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loadDoctorPatientAppointments(activeDoctor);
 });
 
-function loadDoctorPatientAppointments(activeDoctor) {
+async function loadDoctorPatientAppointments(activeDoctor) {
     const tbodyActive = document.getElementById("therapistPatientTableBody");
     const tbodyCompleted = document.getElementById("therapistCompletedTableBody");
     const totalPatientsElem = document.getElementById("totalPatientsCount");
@@ -46,7 +46,25 @@ function loadDoctorPatientAppointments(activeDoctor) {
 
     if (!tbodyActive) return;
 
-    // Fetch all global appointments & user appointment stores
+    // Fetch live appointments from backend API (Local Server and Live Render Server)
+    let apiAppts = [];
+    try {
+        const resLocal = await fetch("/api/appointment/all");
+        const dataLocal = await resLocal.json();
+        if (dataLocal.success && Array.isArray(dataLocal.appointments)) {
+            apiAppts.push(...dataLocal.appointments);
+        }
+    } catch (e) {}
+
+    try {
+        const resLive = await fetch("https://mindcare-1-r9a5.onrender.com/api/appointment/all");
+        const dataLive = await resLive.json();
+        if (dataLive.success && Array.isArray(dataLive.appointments)) {
+            apiAppts.push(...dataLive.appointments);
+        }
+    } catch (e) {}
+
+    // Fetch all global appointments & user appointment stores from localStorage
     const allGlobal = JSON.parse(localStorage.getItem("mindcare_all_global_appointments") || "[]");
     const extraUserAppts = [];
     Object.keys(localStorage).forEach(key => {
@@ -57,16 +75,17 @@ function loadDoctorPatientAppointments(activeDoctor) {
             } catch (e) {}
         }
     });
-    const combined = [...allGlobal, ...extraUserAppts];
+    const combined = [...apiAppts, ...allGlobal, ...extraUserAppts];
 
-    // Deduplicate by appointment ID (ensuring Cancelled status takes priority if present)
+    // Deduplicate by appointment ID or roomKey
     const uniqueMap = {};
     combined.forEach(a => {
-        if (a._id) {
+        if (a) {
+            const key = a._id || a.roomKey || (a.fullName + "_" + a.date + "_" + a.time);
             const currentStatus = (a.status || "").toLowerCase().trim();
-            const existing = uniqueMap[a._id];
-            if (!existing || currentStatus === "cancelled") {
-                uniqueMap[a._id] = a;
+            const existing = uniqueMap[key];
+            if (!existing || currentStatus === "cancelled" || a.attended === true || currentStatus === "therapy session completed") {
+                uniqueMap[key] = a;
             }
         }
     });
@@ -74,12 +93,29 @@ function loadDoctorPatientAppointments(activeDoctor) {
     const allAppts = Object.values(uniqueMap);
 
     // Filter strictly for the logged-in doctor (exclude cancelled appointments)
-    const doctorNameKey = (activeDoctor.name || "").toLowerCase().trim();
+    const docNameRaw = (activeDoctor.name || "").toLowerCase().trim();
+    const docNameClean = docNameRaw.replace(/^dr\.\s*/i, "").trim();
+    const docId = (activeDoctor._id || activeDoctor.id || "").toString().trim();
+
     const myPatientBookings = allAppts.filter(a => {
-        const docNameInAppt = (a.therapist || "").toLowerCase().trim();
         const rawStatus = (a.status || "").toLowerCase().trim();
-        return (docNameInAppt === doctorNameKey || docNameInAppt.includes(doctorNameKey) || doctorNameKey.includes(docNameInAppt)) && rawStatus !== "cancelled";
+        if (rawStatus === "cancelled") return false;
+
+        const apptTherapistRaw = (a.therapist || "").toLowerCase().trim();
+        const apptTherapistClean = apptTherapistRaw.replace(/^dr\.\s*/i, "").trim();
+        const apptTherapistId = (a.therapistId || "").toString().trim();
+
+        const matchName = docNameClean && apptTherapistClean && (
+            apptTherapistClean === docNameClean ||
+            apptTherapistClean.includes(docNameClean) ||
+            docNameClean.includes(apptTherapistClean)
+        );
+
+        const matchId = docId && apptTherapistId && (docId === apptTherapistId);
+
+        return matchName || matchId;
     });
+
 
 
 
@@ -333,10 +369,18 @@ function handleTherapistSessionJoin(event, mode, dateStr, timeStr) {
     return true;
 }
 
-window.markTherapistSessionCompleted = function(apptId) {
+window.markTherapistSessionCompleted = async function(apptId) {
     if (!apptId) return;
 
     if (!confirm("Are you sure you want to mark this therapy session as completed?")) return;
+
+    // Send complete request to backend API
+    try {
+        await fetch("/api/appointment/complete/" + apptId, { method: "PUT" });
+    } catch (e) {}
+    try {
+        await fetch("https://mindcare-1-r9a5.onrender.com/api/appointment/complete/" + apptId, { method: "PUT" });
+    } catch (e) {}
 
     // Update global appointments
     let allGlobal = JSON.parse(localStorage.getItem("mindcare_all_global_appointments") || "[]");
@@ -366,7 +410,7 @@ window.markTherapistSessionCompleted = function(apptId) {
 
     const activeDoctorRaw = localStorage.getItem("mindcare_active_therapist_session");
     if (activeDoctorRaw) {
-        loadDoctorPatientAppointments(JSON.parse(activeDoctorRaw));
+        await loadDoctorPatientAppointments(JSON.parse(activeDoctorRaw));
     }
 
     alert("✅ Therapy session marked as Completed! Moved to Completed Sessions.");

@@ -216,6 +216,33 @@ document.addEventListener("DOMContentLoaded", () => {
             globalAppts.unshift(confirmedAppt);
             localStorage.setItem("mindcare_all_global_appointments", JSON.stringify(globalAppts));
 
+            // Post Appointment to Backend Database (Local & Live Render Server)
+            (async function syncToBackendDatabase() {
+                const token = localStorage.getItem("token");
+                const headers = { "Content-Type": "application/json" };
+                if (token) headers["Authorization"] = `Bearer ${token}`;
+
+                try {
+                    await fetch("/api/appointment/book", {
+                        method: "POST",
+                        headers: headers,
+                        body: JSON.stringify(confirmedAppt)
+                    });
+                } catch (err) {
+                    console.warn("Local backend sync failed/offline:", err);
+                }
+
+                try {
+                    await fetch("https://mindcare-1-r9a5.onrender.com/api/appointment/book", {
+                        method: "POST",
+                        headers: headers,
+                        body: JSON.stringify(confirmedAppt)
+                    });
+                } catch (err) {
+                    console.warn("Live Render server appointment sync error:", err);
+                }
+            })();
+
             // Remove pending booking
             localStorage.removeItem("mindcare_pending_booking");
 

@@ -1,10 +1,11 @@
 const Appointment = require("../models/Appointment");
 
 // ================= Book Appointment =================
-
 exports.bookAppointment = async (req, res) => {
     try {
         const {
+            user,
+            userId,
             fullName,
             email,
             phone,
@@ -16,30 +17,36 @@ exports.bookAppointment = async (req, res) => {
             time,
             mode,
             age,
-            concern
+            concern,
+            status,
+            paymentStatus,
+            amountPaid,
+            roomKey
         } = req.body;
 
-        if (!therapistId) {
-            return res.status(400).json({
-                success: false,
-                message: "Therapist ID is required"
-            });
-        }
+        const effectiveUser = (req.user && req.user.id) ? req.user.id : (user || userId || "guest");
+        const effectiveTherapistId = therapistId || "default_therapist";
+        const effectiveTherapist = therapist || "Dr. Sarah Wilson";
 
         const appointment = await Appointment.create({
-            user: req.user.id,
-            therapistId,
-            therapist,
-            therapistSpecialization: therapistSpecialization || "",
+            user: effectiveUser,
+            therapistId: effectiveTherapistId,
+            therapist: effectiveTherapist,
+            therapistSpecialization: therapistSpecialization || "Certified Specialist",
             therapistImage: therapistImage || "",
-            fullName,
-            email,
-            phone,
-            date,
-            time,
-            mode,
-            age,
-            concern
+            fullName: fullName || "Patient",
+            email: email || "patient@gmail.com",
+            phone: phone || "",
+            date: date || new Date().toISOString().split("T")[0],
+            time: time || "10:00 AM",
+            mode: mode || "Video Call",
+            age: age || 25,
+            concern: concern || "General Counseling",
+            status: status || "Confirmed",
+            paymentStatus: paymentStatus || "Paid",
+            amountPaid: amountPaid || 999,
+            roomKey: roomKey || ("room_" + Math.floor(100000 + Math.random() * 900000)),
+            attended: false
         });
 
         res.status(201).json({
@@ -57,138 +64,125 @@ exports.bookAppointment = async (req, res) => {
     }
 };
 
-// ================= Get My Appointments =================
-
-exports.getAppointments = async (req, res) => {
-
+// ================= Get All Appointments (for Therapist Dashboard & Sync) =================
+exports.getAllAppointments = async (req, res) => {
     try {
-
-        const appointments = await Appointment.find({
-
-            user: req.user.id
-
-        }).sort({
-
-            createdAt: -1
-
+        const appointments = await Appointment.find({}).sort({ createdAt: -1 });
+        res.json({
+            success: true,
+            appointments
         });
+    } catch (error) {
+        console.error("GET ALL APPOINTMENTS ERROR:", error);
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
 
+// ================= Get Therapist Scoped Appointments =================
+exports.getTherapistAppointments = async (req, res) => {
+    try {
+        const { therapistId } = req.params;
+        const appointments = await Appointment.find({
+            $or: [
+                { therapistId: therapistId },
+                { therapist: { $regex: therapistId, $options: "i" } }
+            ]
+        }).sort({ createdAt: -1 });
 
         res.json({
-
             success: true,
-
             appointments
-
         });
-
-
     } catch (error) {
-
-        console.error("GET APPOINTMENTS ERROR:", error);
-
+        console.error("GET THERAPIST APPOINTMENTS ERROR:", error);
         res.status(500).json({
-
             success: false,
-
             message: error.message
-
         });
-
     }
-
 };
 
-
-// ================= Cancel Appointment =================
-
-exports.cancelAppointment = async (req, res) => {
-
+// ================= Get My Appointments (Patient View) =================
+exports.getAppointments = async (req, res) => {
     try {
+        const userId = req.user ? req.user.id : null;
+        let query = {};
+        if (userId) {
+            query = { user: userId };
+        } else {
+            query = {};
+        }
 
-        console.log(
-            "CANCEL APPOINTMENT ID:",
-            req.params.id
-        );
+        const appointments = await Appointment.find(query).sort({ createdAt: -1 });
+        res.json({
+            success: true,
+            appointments
+        });
+    } catch (error) {
+        console.error("GET MY APPOINTMENTS ERROR:", error);
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
 
-
-        const appointment =
-            await Appointment.findById(
-                req.params.id
-            );
-
-
+// ================= Complete Session =================
+exports.completeAppointment = async (req, res) => {
+    try {
+        const appointment = await Appointment.findById(req.params.id);
         if (!appointment) {
-
             return res.status(404).json({
-
                 success: false,
-
                 message: "Appointment not found"
-
             });
-
         }
 
-
-        // Make sure user can cancel
-        // only their own appointment
-
-        if (
-            appointment.user.toString() !==
-            req.user.id.toString()
-        ) {
-
-            return res.status(403).json({
-
-                success: false,
-
-                message: "You are not allowed to cancel this appointment"
-
-            });
-
-        }
-
-
-        appointment.status = "Cancelled";
-
-
+        appointment.attended = true;
+        appointment.status = "Therapy Session Completed";
         await appointment.save();
 
+        res.status(200).json({
+            success: true,
+            message: "Therapy session marked as completed",
+            appointment
+        });
+    } catch (error) {
+        console.error("COMPLETE APPOINTMENT ERROR:", error);
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
 
-        console.log(
-            "APPOINTMENT CANCELLED:",
-            appointment._id
-        );
+// ================= Cancel Appointment =================
+exports.cancelAppointment = async (req, res) => {
+    try {
+        const appointment = await Appointment.findById(req.params.id);
+        if (!appointment) {
+            return res.status(404).json({
+                success: false,
+                message: "Appointment not found"
+            });
+        }
 
+        appointment.status = "Cancelled";
+        await appointment.save();
 
         res.status(200).json({
-
             success: true,
-
             message: "Appointment Cancelled Successfully",
-
             appointment
-
         });
-
-
     } catch (error) {
-
-        console.log(
-            "CANCEL ERROR:",
-            error
-        );
-
-
+        console.error("CANCEL ERROR:", error);
         res.status(500).json({
-
             success: false,
-
             message: error.message
-
         });
-
     }
-
-};
+};

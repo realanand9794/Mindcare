@@ -3,15 +3,13 @@ const mongoose = require("mongoose");
 const appointmentSchema = new mongoose.Schema(
     {
         user: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
-            required: true,
+            type: mongoose.Schema.Types.Mixed,
+            default: "guest",
         },
 
         therapistId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
-            required: true,
+            type: String,
+            default: "",
         },
 
         therapist: {
@@ -56,17 +54,12 @@ const appointmentSchema = new mongoose.Schema(
 
         mode: {
             type: String,
-            enum: [
-                "Video Call",
-                "Voice Call",
-                "Live Chat"
-            ],
             default: "Video Call",
         },
 
         age: {
-            type: Number,
-            required: true,
+            type: mongoose.Schema.Types.Mixed,
+            default: 25,
         },
 
         concern: {
@@ -76,12 +69,27 @@ const appointmentSchema = new mongoose.Schema(
 
         status: {
             type: String,
-            enum: [
-                "Pending",
-                "Confirmed",
-                "Cancelled"
-            ],
-            default: "Pending",
+            default: "Confirmed",
+        },
+
+        paymentStatus: {
+            type: String,
+            default: "Paid",
+        },
+
+        amountPaid: {
+            type: Number,
+            default: 999,
+        },
+
+        roomKey: {
+            type: String,
+            default: "",
+        },
+
+        attended: {
+            type: Boolean,
+            default: false,
         },
     },
 
@@ -90,8 +98,4 @@ const appointmentSchema = new mongoose.Schema(
     }
 );
 
-module.exports =
-    mongoose.model(
-        "Appointment",
-        appointmentSchema
-    );
+module.exports = mongoose.model("Appointment", appointmentSchema);
