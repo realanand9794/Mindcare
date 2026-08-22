@@ -318,3 +318,175 @@ body {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
 }
+
+/* Mobile Header Bar & Backdrop Overlay */
+.mobile-header-bar {
+    display: none;
+    height: 60px;
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 0 16px;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+}
+
+.mobile-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 17px;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.mobile-logo i {
+    color: #4f46e5;
+    font-size: 20px;
+}
+
+.mobile-menu-btn {
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    color: #334155;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.mobile-menu-btn:hover {
+    background: #e0e7ff;
+    color: #4338ca;
+}
+
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+/* =========================================
+   Responsive Media Queries
+========================================= */
+@media (max-width: 992px) {
+    .mobile-header-bar {
+        display: flex;
+    }
+
+    .therapist-portal-container {
+        flex-direction: column;
+    }
+
+    .portal-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        z-index: 1001;
+        transform: translateX(-100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.15);
+        width: 280px;
+    }
+
+    .portal-sidebar.open {
+        transform: translateX(0);
+    }
+
+    .portal-main {
+        padding: 24px 16px;
+    }
+
+    .portal-topbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 20px;
+        padding-bottom: 16px;
+    }
+
+    .portal-topbar h2 {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .portal-main {
+        padding: 18px 12px;
+    }
+
+    .table-card {
+        padding: 16px 12px;
+        border-radius: 14px;
+    }
+
+    .card-header h3 {
+        font-size: 16px;
+    }
+
+    .table-responsive {
+        -webkit-overflow-scrolling: touch;
+        border-radius: 8px;
+    }
+
+    .patient-table {
+        min-width: 650px;
+    }
+
+    .patient-table th,
+    .patient-table td {
+        padding: 10px 12px;
+    }
+
+    .doc-stat-card {
+        padding: 16px;
+        gap: 14px;
+    }
+
+    .doc-stat-card i {
+        font-size: 26px;
+    }
+
+    .doc-stat-card h3 {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .doctor-stats-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .join-action-btn {
+        padding: 6px 10px;
+        font-size: 11.5px;
+    }
+
+    .mark-complete-btn {
+        padding: 6px 10px;
+        font-size: 11px;
+    }
+}
+

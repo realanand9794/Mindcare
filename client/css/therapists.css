@@ -81,3 +81,19 @@ text-decoration:none;
 color:#2563eb;
 font-weight:bold;
 }
+
+@media (max-width: 576px) {
+    header {
+        padding: 24px 16px;
+    }
+    
+    .container {
+        padding: 20px 12px;
+        gap: 16px;
+        grid-template-columns: 1fr;
+    }
+    
+    .card {
+        padding: 20px 16px;
+    }
+}

@@ -16,12 +16,26 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 </head>
 
-<body>
+    <!-- Mobile Top Navigation Header -->
+    <header class="mobile-header-bar">
+        <div class="mobile-logo">
+            <i class="fa-solid fa-user-doctor"></i>
+            <span>MindCare Portal</span>
+        </div>
+        <div class="mobile-header-actions">
+            <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="Toggle Mobile Menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Overlay backdrop for mobile menu drawer -->
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
     <div class="therapist-portal-container">
 
         <!-- Sidebar -->
-        <aside class="portal-sidebar">
+        <aside class="portal-sidebar" id="portalSidebar">
             <div class="sidebar-logo">
                 <i class="fa-solid fa-user-doctor"></i>
                 <span>MindCare Portal</span>

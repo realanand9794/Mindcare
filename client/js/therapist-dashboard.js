@@ -33,6 +33,23 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // Mobile Drawer Toggle Handler
+    const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+    const portalSidebar = document.getElementById("portalSidebar");
+    const sidebarOverlay = document.getElementById("sidebarOverlay");
+
+    function toggleMobileMenu() {
+        if (portalSidebar) portalSidebar.classList.toggle("open");
+        if (sidebarOverlay) sidebarOverlay.classList.toggle("active");
+    }
+
+    if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener("click", toggleMobileMenu);
+    }
+    if (sidebarOverlay) {
+        sidebarOverlay.addEventListener("click", toggleMobileMenu);
+    }
+
     // 3. Load Scoped Patient Appointments
     loadDoctorPatientAppointments(activeDoctor);
 });

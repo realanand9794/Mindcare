@@ -1171,3 +1171,24 @@ body.dark .mark-complete-btn {
     color: #34d399 !important;
     border-color: #059669 !important;
 }
+
+body.dark .mobile-header-bar {
+    background: #1e293b !important;
+    border-bottom-color: #334155 !important;
+}
+
+body.dark .mobile-logo {
+    color: #ffffff !important;
+}
+
+body.dark .mobile-menu-btn {
+    background: #0f172a !important;
+    border-color: #334155 !important;
+    color: #cbd5e1 !important;
+}
+
+body.dark .mobile-menu-btn:hover {
+    background: #334155 !important;
+    color: #ffffff !important;
+}
+

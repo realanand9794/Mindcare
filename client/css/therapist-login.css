@@ -164,3 +164,27 @@ body {
 .card-footer-info a:hover {
     text-decoration: underline;
 }
+
+@media (max-width: 576px) {
+    body {
+        padding: 20px 12px;
+    }
+
+    .therapist-login-card {
+        padding: 24px 16px;
+        border-radius: 18px;
+    }
+
+    .portal-brand i {
+        font-size: 38px;
+    }
+
+    .portal-brand h2 {
+        font-size: 20px;
+    }
+
+    .quick-selector-box {
+        padding: 12px;
+    }
+}
+

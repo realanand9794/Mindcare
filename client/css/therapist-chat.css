@@ -230,3 +230,34 @@ body {
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(99, 102, 241, 0.6);
 }
+
+@media (max-width: 768px) {
+    .doc-chat-header {
+        padding: 10px 12px;
+        height: auto;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .doctor-identity-badge {
+        display: none;
+    }
+
+    .doc-chat-body {
+        padding: 14px 10px;
+    }
+
+    .doc-msg-bubble {
+        max-width: 85%;
+    }
+
+    .doc-chat-footer {
+        padding: 10px 12px;
+        height: auto;
+    }
+
+    .doc-send-btn {
+        padding: 0 16px;
+    }
+}
+
