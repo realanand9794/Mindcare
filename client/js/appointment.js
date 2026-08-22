@@ -102,87 +102,174 @@ if (therapistName) {
 }
 
 
-// ================= BOOK APPOINTMENT =================
+async function updateAvailableTimeSlots() {
+    const timeSelect = document.getElementById("time");
+    const dateInput = document.getElementById("date");
+    const therapistInput = document.getElementById("therapist");
 
-const form =
-    document.getElementById("bookingForm");
+    if (!timeSelect || !dateInput || !therapistInput) return;
 
+    const selectedTherapist = (therapistInput.value || "").toLowerCase().trim();
+    const selectedDate = dateInput.value;
 
-form.addEventListener("submit", async (e) => {
+    if (!selectedTherapist || !selectedDate) return;
 
-    e.preventDefault();
+    // 1. Fetch live active appointments from backend API and local stores
+    let apiAppts = [];
+    try {
+        const resLocal = await fetch("/api/appointment/all");
+        const dataLocal = await resLocal.json();
+        if (dataLocal.success && Array.isArray(dataLocal.appointments)) {
+            apiAppts.push(...dataLocal.appointments);
+        }
+    } catch (e) {}
 
-
-    const fullName =
-        document.getElementById("fullName").value;
-
-    const email =
-        document.getElementById("email").value;
-
-    const phone =
-        document.getElementById("phone").value;
-
-    const therapist =
-        document.getElementById("therapist").value;
-
-    const date =
-        document.getElementById("date").value;
-
-    const time =
-        document.getElementById("time").value;
-
-    const mode =
-        document.getElementById("mode").value;
-
-    const age =
-        document.getElementById("age").value;
-
-    const concern =
-        document.getElementById("concern").value;
-
-
-    const token =
-        localStorage.getItem("token");
-
-
-    // ================= LOGIN CHECK =================
-
-    if (!token) {
-
-        alert("Please login first.");
-
-        window.location.href =
-            "login.html";
-
-        return;
-
+    if (apiAppts.length === 0) {
+        try {
+            const resLive = await fetch("https://mindcare-1-r9a5.onrender.com/api/appointment/all");
+            const dataLive = await resLive.json();
+            if (dataLive.success && Array.isArray(dataLive.appointments)) {
+                apiAppts.push(...dataLive.appointments);
+            }
+        } catch (e) {}
     }
 
+    const allGlobal = JSON.parse(localStorage.getItem("mindcare_all_global_appointments") || "[]");
+    const extraUserAppts = [];
+    Object.keys(localStorage).forEach(k => {
+        if (k.startsWith("mindcare_user_appointments_")) {
+            try {
+                const list = JSON.parse(localStorage.getItem(k) || "[]");
+                if (Array.isArray(list)) extraUserAppts.push(...list);
+            } catch (e) {}
+        }
+    });
+
+    const combined = [...apiAppts, ...allGlobal, ...extraUserAppts];
+
+    // Filter occupied slots ONLY for selectedTherapist on selectedDate
+    const bookedTimeSlots = new Set();
+    combined.forEach(a => {
+        if (!a) return;
+        const apptTherapist = (a.therapist || a.doctorName || a.therapistName || "").toLowerCase().trim();
+        const apptDate = (a.date || "").trim();
+        const apptTime = (a.time || "").trim();
+        const apptStatus = (a.status || "").toLowerCase().trim();
+
+        if (apptTherapist === selectedTherapist && apptDate === selectedDate && apptStatus !== "cancelled" && apptTime) {
+            const cleanTimeStr = apptTime.replace(/\s*\([^)]*\)/g, "").trim().toUpperCase();
+            bookedTimeSlots.add(cleanTimeStr);
+        }
+    });
+
+    // 2. Iterate through time select options
+    let firstAvailableValue = null;
+    let isCurrentSelectedBooked = false;
+
+    for (let opt of timeSelect.options) {
+        const rawTimeStr = (opt.value || opt.text).replace(/\s*\([^)]*\)/g, "").trim();
+        const normalizedKey = rawTimeStr.toUpperCase();
+
+        if (bookedTimeSlots.has(normalizedKey)) {
+            opt.disabled = true;
+            opt.textContent = `${rawTimeStr} (Booked 🚫)`;
+            opt.style.color = "#dc2626";
+            if (timeSelect.value === rawTimeStr || timeSelect.value === opt.value) {
+                isCurrentSelectedBooked = true;
+            }
+        } else {
+            opt.disabled = false;
+            opt.textContent = rawTimeStr;
+            opt.style.color = "";
+            if (!firstAvailableValue) {
+                firstAvailableValue = rawTimeStr;
+            }
+        }
+    }
+
+    // If currently selected option is booked, switch to first available unbooked option
+    if (isCurrentSelectedBooked && firstAvailableValue) {
+        timeSelect.value = firstAvailableValue;
+    }
+}
+
+// Attach date picker constraint & change listener
+document.addEventListener("DOMContentLoaded", () => {
+    const dateInput = document.getElementById("date");
+    if (dateInput) {
+        const todayStr = new Date().toISOString().split("T")[0];
+        dateInput.min = todayStr;
+        if (!dateInput.value) {
+            dateInput.value = todayStr;
+        }
+
+        dateInput.addEventListener("change", updateAvailableTimeSlots);
+    }
+
+    updateAvailableTimeSlots();
+});
+
+// ================= BOOK APPOINTMENT =================
+
+const form = document.getElementById("bookingForm");
+
+form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const fullName = document.getElementById("fullName").value;
+    const email = document.getElementById("email").value;
+    const phone = document.getElementById("phone").value;
+    const therapist = document.getElementById("therapist").value;
+    const date = document.getElementById("date").value;
+    const timeRaw = document.getElementById("time").value;
+    const time = timeRaw.replace(/\s*\([^)]*\)/g, "").trim();
+    const mode = document.getElementById("mode").value;
+    const age = document.getElementById("age").value;
+    const concern = document.getElementById("concern").value;
+
+    const token = localStorage.getItem("token");
+
+    // ================= LOGIN CHECK =================
+    if (!token) {
+        alert("Please login first.");
+        window.location.href = "login.html";
+        return;
+    }
 
     // ================= THERAPIST CHECK =================
-
     if (!therapistId) {
-
         alert("Therapist ID missing. Please select therapist again.");
-
-        window.location.href =
-            "therapists.html";
-
+        window.location.href = "therapists.html";
         return;
-
     }
 
     // Check time-slot conflict (1 slot = 1 appointment per therapist)
+    let apiAppts = [];
+    try {
+        const res = await fetch("/api/appointment/all");
+        const data = await res.json();
+        if (data.success && Array.isArray(data.appointments)) apiAppts.push(...data.appointments);
+    } catch (e) {}
+
     const allGlobalAppointments = JSON.parse(localStorage.getItem("mindcare_all_global_appointments") || "[]");
-    const isSlotOccupied = allGlobalAppointments.some(appt => 
-        appt.therapist && appt.therapist.toLowerCase().trim() === therapist.toLowerCase().trim() &&
-        appt.date === date &&
-        appt.time === time &&
-        (appt.status || "").toLowerCase() !== "cancelled"
-    );
+    const combinedAppts = [...apiAppts, ...allGlobalAppointments];
+
+    const isSlotOccupied = combinedAppts.some(appt => {
+        if (!appt) return false;
+        const apptTherapist = (appt.therapist || appt.doctorName || appt.therapistName || "").toLowerCase().trim();
+        const apptDate = (appt.date || "").trim();
+        const apptTime = (appt.time || "").replace(/\s*\([^)]*\)/g, "").trim().toUpperCase();
+        const apptStatus = (appt.status || "").toLowerCase().trim();
+
+        return apptTherapist === therapist.toLowerCase().trim() &&
+               apptDate === date &&
+               apptTime === time.toUpperCase() &&
+               apptStatus !== "cancelled";
+    });
 
     if (isSlotOccupied) {
         alert(`⚠️ TIME SLOT CONFLICT!\n\n${therapist} is already booked on ${date} at ${time}.\n\nPlease select a different date or time slot.`);
+        updateAvailableTimeSlots();
         return;
     }
 
