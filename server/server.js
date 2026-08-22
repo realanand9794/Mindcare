@@ -142,8 +142,10 @@ app.use("/api/therapists", therapistRoutes);
 app.use("/api/payment", paymentRoutes);
 
 // Client Route Fallback
-app.get("*", (req, res, next) => {
-    if (req.path.startsWith("/api")) return next();
+app.use((req, res, next) => {
+    if (req.path.startsWith("/api")) {
+        return res.status(404).json({ success: false, message: "API endpoint not found" });
+    }
     res.sendFile(path.join(__dirname, "../client/index.html"));
 });
 
