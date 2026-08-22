@@ -411,6 +411,65 @@ async function loadAppointments() {
 
         listElem.appendChild(card);
     });
+
+    // Render Cancelled & Missed Appointments List
+    const cancelledListElem = document.getElementById("cancelledAppointmentsList");
+    const cancelledAndMissedAppointments = appointments.filter(a => {
+        const info = computeAppointmentStatus(a);
+        const rawStatus = (a.status || "").toLowerCase().trim();
+        return info.badgeClass === "cancelled" || info.badgeClass === "missing" || rawStatus === "cancelled" || rawStatus === "missing" || rawStatus === "expired" || rawStatus === "missed";
+    });
+
+    if (cancelledListElem) {
+        cancelledListElem.innerHTML = "";
+        if (!cancelledAndMissedAppointments || cancelledAndMissedAppointments.length === 0) {
+            cancelledListElem.innerHTML = `
+                <div class="empty" style="padding: 30px 20px;">
+                    <i class="fa-solid fa-circle-check" style="font-size: 32px; color: #10b981; margin-bottom: 8px;"></i>
+                    <h4 style="color: #64748b;">No Cancelled or Missed Sessions</h4>
+                    <p style="font-size: 13px; color: #94a3b8;">All your therapy sessions are in good standing.</p>
+                </div>
+            `;
+        } else {
+            cancelledAndMissedAppointments.forEach(appointment => {
+                const statusInfo = computeAppointmentStatus(appointment);
+                const card = document.createElement("div");
+                card.className = "appointment-card";
+                card.style.borderLeft = "5px solid #ef4444";
+                card.innerHTML = `
+                    <div class="appointment-header">
+                        <h3>
+                            <i class="fa-solid fa-user-doctor"></i>
+                            ${appointment.therapist}
+                        </h3>
+                        <span class="status ${statusInfo.badgeClass}">
+                            ${statusInfo.displayLabel}
+                        </span>
+                    </div>
+
+                    <div class="appointment-details">
+                        <div class="detail">
+                            <span><i class="fa-solid fa-calendar"></i> Date</span>
+                            <strong>${appointment.date}</strong>
+                        </div>
+                        <div class="detail">
+                            <span><i class="fa-solid fa-clock"></i> Time</span>
+                            <strong>${appointment.time}</strong>
+                        </div>
+                        <div class="detail">
+                            <span><i class="fa-solid fa-video"></i> Mode</span>
+                            <strong>${appointment.mode || "Consultation"}</strong>
+                        </div>
+                        <div class="detail">
+                            <span><i class="fa-solid fa-circle-exclamation"></i> Status</span>
+                            <strong>${statusInfo.displayLabel}</strong>
+                        </div>
+                    </div>
+                `;
+                cancelledListElem.appendChild(card);
+            });
+        }
+    }
 }
 
 // Cancel Appointment Handler
