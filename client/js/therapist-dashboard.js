@@ -305,9 +305,6 @@ async function loadDoctorPatientAppointments(activeDoctor) {
                 <td style="text-align: right;">
                     <div style="display: flex; gap: 8px; justify-content: flex-end; align-items: center;">
                         ${joinBtn}
-                        <button onclick="markTherapistSessionCompleted('${appt._id}')" class="mark-complete-btn" title="Mark Session as Completed">
-                            <i class="fa-solid fa-circle-check"></i> Complete
-                        </button>
                     </div>
                 </td>
             `;
