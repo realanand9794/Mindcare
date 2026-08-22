@@ -216,30 +216,54 @@ document.addEventListener("DOMContentLoaded", () => {
             globalAppts.unshift(confirmedAppt);
             localStorage.setItem("mindcare_all_global_appointments", JSON.stringify(globalAppts));
 
-            // Post Appointment to Backend Database (Local & Live Render Server)
+            // Post Appointment to Backend Database (Local or Live Render Server)
             (async function syncToBackendDatabase() {
                 const token = localStorage.getItem("token");
                 const headers = { "Content-Type": "application/json" };
                 if (token) headers["Authorization"] = `Bearer ${token}`;
 
+                let savedAppt = null;
+
                 try {
-                    await fetch("/api/appointment/book", {
+                    const resLocal = await fetch("/api/appointment/book", {
                         method: "POST",
                         headers: headers,
                         body: JSON.stringify(confirmedAppt)
                     });
+                    const dataLocal = await resLocal.json();
+                    if (dataLocal.success && dataLocal.appointment) {
+                        savedAppt = dataLocal.appointment;
+                    }
                 } catch (err) {
                     console.warn("Local backend sync failed/offline:", err);
                 }
 
-                try {
-                    await fetch("https://mindcare-1-r9a5.onrender.com/api/appointment/book", {
-                        method: "POST",
-                        headers: headers,
-                        body: JSON.stringify(confirmedAppt)
-                    });
-                } catch (err) {
-                    console.warn("Live Render server appointment sync error:", err);
+                if (!savedAppt) {
+                    try {
+                        const resLive = await fetch("https://mindcare-1-r9a5.onrender.com/api/appointment/book", {
+                            method: "POST",
+                            headers: headers,
+                            body: JSON.stringify(confirmedAppt)
+                        });
+                        const dataLive = await resLive.json();
+                        if (dataLive.success && dataLive.appointment) {
+                            savedAppt = dataLive.appointment;
+                        }
+                    } catch (err) {
+                        console.warn("Live Render server appointment sync error:", err);
+                    }
+                }
+
+                if (savedAppt) {
+                    // Update user appointments store with official backend appointment object
+                    let userAppts = JSON.parse(localStorage.getItem(localKey) || "[]");
+                    userAppts = userAppts.map(a => (a.txnId === confirmedAppt.txnId || a.roomKey === confirmedAppt.roomKey) ? savedAppt : a);
+                    localStorage.setItem(localKey, JSON.stringify(userAppts));
+
+                    // Update global store
+                    let globalAppts = JSON.parse(localStorage.getItem("mindcare_all_global_appointments") || "[]");
+                    globalAppts = globalAppts.map(a => (a.txnId === confirmedAppt.txnId || a.roomKey === confirmedAppt.roomKey) ? savedAppt : a);
+                    localStorage.setItem("mindcare_all_global_appointments", JSON.stringify(globalAppts));
                 }
             })();
 

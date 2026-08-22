@@ -234,22 +234,48 @@ function markSessionAttended(id) {
     localStorage.setItem("mindcare_all_global_appointments", JSON.stringify(globalAppts));
 }
 
+function getAppointmentFingerprint(appt) {
+    if (!appt) return "";
+    if (appt.txnId) return "txn_" + appt.txnId;
+    if (appt.roomKey) return "room_" + appt.roomKey;
+    const doc = (appt.therapist || appt.doctorName || appt.therapistName || "").toLowerCase().replace(/^dr\.\s*/i, "").trim();
+    const dt = (appt.date || "").trim();
+    const tm = (appt.time || "").trim();
+    const em = (appt.email || appt.userEmail || "").toLowerCase().trim();
+    if (doc && dt && tm) {
+        return `fp_${doc}_${dt}_${tm}_${em}`;
+    }
+    return appt._id || "";
+}
+
 // ================= LOAD APPOINTMENTS =================
 async function loadAppointments() {
     let apiAppts = [];
 
-    // 1. Try Backend API
+    // 1. Try Relative Backend API first, then Live Fallback
     try {
-        const response = await fetch("https://mindcare-1-r9a5.onrender.com/api/appointment/my", {
-            method: "GET",
-            headers: { "Authorization": `Bearer ${token}` }
+        const responseLocal = await fetch("/api/appointment/my", {
+            headers: token ? { "Authorization": `Bearer ${token}` } : {}
         });
-        const data = await response.json();
-        if (data.success && Array.isArray(data.appointments)) {
-            apiAppts = data.appointments;
+        const dataLocal = await responseLocal.json();
+        if (dataLocal.success && Array.isArray(dataLocal.appointments)) {
+            apiAppts = dataLocal.appointments;
         }
-    } catch (err) {
-        console.warn("Dashboard API fetch offline, using local storage fallback:", err);
+    } catch (err) {}
+
+    if (apiAppts.length === 0) {
+        try {
+            const response = await fetch("https://mindcare-1-r9a5.onrender.com/api/appointment/my", {
+                method: "GET",
+                headers: token ? { "Authorization": `Bearer ${token}` } : {}
+            });
+            const data = await response.json();
+            if (data.success && Array.isArray(data.appointments)) {
+                apiAppts = data.appointments;
+            }
+        } catch (err) {
+            console.warn("Dashboard API fetch offline, using local storage fallback:", err);
+        }
     }
 
     // 2. Read User-Isolated LocalStorage
@@ -288,11 +314,14 @@ async function loadAppointments() {
     const combined = [...apiAppts, ...localAppts, ...filteredGlobal];
     const uniqueMap = {};
     combined.forEach(a => {
-        if (a && a._id) {
-            const currentStatus = (a.status || "").toLowerCase().trim();
-            const existing = uniqueMap[a._id];
-            if (!existing || currentStatus === "cancelled" || currentStatus === "confirmed") {
-                uniqueMap[a._id] = a;
+        if (a) {
+            const key = getAppointmentFingerprint(a);
+            if (key) {
+                const currentStatus = (a.status || "").toLowerCase().trim();
+                const existing = uniqueMap[key];
+                if (!existing || currentStatus === "cancelled" || currentStatus === "confirmed" || (a._id && !existing._id)) {
+                    uniqueMap[key] = a;
+                }
             }
         }
     });

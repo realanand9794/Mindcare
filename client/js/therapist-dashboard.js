@@ -54,6 +54,20 @@ document.addEventListener("DOMContentLoaded", () => {
     loadDoctorPatientAppointments(activeDoctor);
 });
 
+function getAppointmentFingerprint(appt) {
+    if (!appt) return "";
+    if (appt.txnId) return "txn_" + appt.txnId;
+    if (appt.roomKey) return "room_" + appt.roomKey;
+    const doc = (appt.therapist || appt.doctorName || appt.therapistName || "").toLowerCase().replace(/^dr\.\s*/i, "").trim();
+    const dt = (appt.date || "").trim();
+    const tm = (appt.time || "").trim();
+    const em = (appt.email || appt.userEmail || "").toLowerCase().trim();
+    if (doc && dt && tm) {
+        return `fp_${doc}_${dt}_${tm}_${em}`;
+    }
+    return appt._id || "";
+}
+
 async function loadDoctorPatientAppointments(activeDoctor) {
     const tbodyActive = document.getElementById("therapistPatientTableBody");
     const tbodyCompleted = document.getElementById("therapistCompletedTableBody");
@@ -63,7 +77,7 @@ async function loadDoctorPatientAppointments(activeDoctor) {
 
     if (!tbodyActive) return;
 
-    // Fetch live appointments from backend API (Local Server and Live Render Server)
+    // Fetch live appointments from backend API (Relative Path first, then Live Fallback)
     let apiAppts = [];
     try {
         const resLocal = await fetch("/api/appointment/all");
@@ -73,13 +87,15 @@ async function loadDoctorPatientAppointments(activeDoctor) {
         }
     } catch (e) {}
 
-    try {
-        const resLive = await fetch("https://mindcare-1-r9a5.onrender.com/api/appointment/all");
-        const dataLive = await resLive.json();
-        if (dataLive.success && Array.isArray(dataLive.appointments)) {
-            apiAppts.push(...dataLive.appointments);
-        }
-    } catch (e) {}
+    if (apiAppts.length === 0) {
+        try {
+            const resLive = await fetch("https://mindcare-1-r9a5.onrender.com/api/appointment/all");
+            const dataLive = await resLive.json();
+            if (dataLive.success && Array.isArray(dataLive.appointments)) {
+                apiAppts.push(...dataLive.appointments);
+            }
+        } catch (e) {}
+    }
 
     // Fetch all global appointments & user appointment stores from localStorage
     const allGlobal = JSON.parse(localStorage.getItem("mindcare_all_global_appointments") || "[]");
@@ -94,15 +110,17 @@ async function loadDoctorPatientAppointments(activeDoctor) {
     });
     const combined = [...apiAppts, ...allGlobal, ...extraUserAppts];
 
-    // Deduplicate by appointment ID or roomKey
+    // Deduplicate by appointment fingerprint
     const uniqueMap = {};
     combined.forEach(a => {
         if (a) {
-            const key = a._id || a.roomKey || (a.fullName + "_" + a.date + "_" + a.time);
-            const currentStatus = (a.status || "").toLowerCase().trim();
-            const existing = uniqueMap[key];
-            if (!existing || currentStatus === "cancelled" || a.attended === true || currentStatus === "therapy session completed") {
-                uniqueMap[key] = a;
+            const key = getAppointmentFingerprint(a);
+            if (key) {
+                const currentStatus = (a.status || "").toLowerCase().trim();
+                const existing = uniqueMap[key];
+                if (!existing || currentStatus === "cancelled" || a.attended === true || currentStatus === "therapy session completed" || (a._id && !existing._id)) {
+                    uniqueMap[key] = a;
+                }
             }
         }
     });
