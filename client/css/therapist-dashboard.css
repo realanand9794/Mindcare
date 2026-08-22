@@ -298,25 +298,15 @@ body {
 }
 
 .mark-complete-btn {
-    padding: 8px 12px;
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: 600;
-    background: #dcfce7;
-    color: #15803d;
-    border: 1px solid #bbf7d0;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    transition: all 0.2s ease;
-}
-
-.mark-complete-btn:hover {
-    background: #16a34a;
-    color: #ffffff;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
 }
 
 /* Mobile Header Bar & Backdrop Overlay */
