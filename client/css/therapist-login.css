@@ -10,19 +10,29 @@ MindCare Therapist Login Page Styling
     font-family: 'Poppins', sans-serif;
 }
 
+html {
+    min-height: 100%;
+    overflow-y: auto;
+}
+
 body {
     background: radial-gradient(circle at top right, #312e81, #0f172a);
     color: #f8fafc;
     min-height: 100vh;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 40px 0;
 }
 
 .therapist-login-page {
     width: 100%;
     max-width: 460px;
-    padding: 20px;
+    padding: 0 20px;
+    margin: auto 0;
 }
 
 .therapist-login-card {
