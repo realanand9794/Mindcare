@@ -7,6 +7,8 @@ const http = require("http");
 const { Server } = require("socket.io");
 const Message = require("./models/Message");
 
+const path = require("path");
+
 const app = express();
 const server = http.createServer(app);
 
@@ -21,6 +23,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Serve static frontend files from client directory
+app.use(express.static(path.join(__dirname, "../client")));
+
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI || "mongodb://127.0.0.1:27017/mindcare")
     .then(() => {
@@ -30,9 +35,9 @@ mongoose.connect(process.env.MONGO_URI || "mongodb://127.0.0.1:27017/mindcare")
         console.error("MongoDB Connection Error:", err);
     });
 
-// Health Test Route
-app.get("/", (req, res) => {
-    res.send("MindCare Backend API Running");
+// API Health Check Route
+app.get("/api/health", (req, res) => {
+    res.json({ success: true, message: "MindCare Backend API Running" });
 });
 
 // ================= SOCKET.IO REAL-TIME CHAT =================
@@ -135,6 +140,12 @@ app.use("/api/messages", messageRoutes);
 app.use("/api/appointment", appointmentRoutes);
 app.use("/api/therapists", therapistRoutes);
 app.use("/api/payment", paymentRoutes);
+
+// Client Route Fallback
+app.get("*", (req, res, next) => {
+    if (req.path.startsWith("/api")) return next();
+    res.sendFile(path.join(__dirname, "../client/index.html"));
+});
 
 // Global Error Handler
 app.use((err, req, res, next) => {
