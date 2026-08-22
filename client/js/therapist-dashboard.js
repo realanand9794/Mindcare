@@ -412,18 +412,32 @@ window.markTherapistSessionCompleted = async function(apptId) {
 
     if (!confirm("Are you sure you want to mark this therapy session as completed?")) return;
 
-    // Send complete request to backend API
+    let targetFp = "";
     try {
-        await fetch("/api/appointment/complete/" + apptId, { method: "PUT" });
+        let allGlobal = JSON.parse(localStorage.getItem("mindcare_all_global_appointments") || "[]");
+        const found = allGlobal.find(a => a._id === apptId || a.roomKey === apptId || a.txnId === apptId);
+        if (found) targetFp = getAppointmentFingerprint(found);
     } catch (e) {}
+
+    // Send complete request to backend API (Relative Path first, then Live Fallback)
+    let completedOnBackend = false;
     try {
-        await fetch("https://mindcare-1-r9a5.onrender.com/api/appointment/complete/" + apptId, { method: "PUT" });
+        const resLocal = await fetch("/api/appointment/complete/" + apptId, { method: "PUT" });
+        const dataLocal = await resLocal.json();
+        if (dataLocal.success) completedOnBackend = true;
     } catch (e) {}
+
+    if (!completedOnBackend) {
+        try {
+            await fetch("https://mindcare-1-r9a5.onrender.com/api/appointment/complete/" + apptId, { method: "PUT" });
+        } catch (e) {}
+    }
 
     // Update global appointments
     let allGlobal = JSON.parse(localStorage.getItem("mindcare_all_global_appointments") || "[]");
     allGlobal = allGlobal.map(a => {
-        if (a._id === apptId || a.roomKey === apptId) {
+        const fp = getAppointmentFingerprint(a);
+        if (a._id === apptId || a.roomKey === apptId || a.txnId === apptId || (targetFp && fp === targetFp)) {
             return { ...a, attended: true, status: "Therapy Session Completed" };
         }
         return a;
@@ -436,7 +450,8 @@ window.markTherapistSessionCompleted = async function(apptId) {
             try {
                 let userAppts = JSON.parse(localStorage.getItem(key) || "[]");
                 userAppts = userAppts.map(a => {
-                    if (a._id === apptId || a.roomKey === apptId) {
+                    const fp = getAppointmentFingerprint(a);
+                    if (a._id === apptId || a.roomKey === apptId || a.txnId === apptId || (targetFp && fp === targetFp)) {
                         return { ...a, attended: true, status: "Therapy Session Completed" };
                     }
                     return a;
