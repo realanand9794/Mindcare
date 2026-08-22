@@ -419,33 +419,55 @@ async function cancelAppointment(id) {
         return;
     }
 
-    // Update in memory
-    const appt = currentLoadedAppointments.find(a => a._id === id);
+    const appt = currentLoadedAppointments.find(a => a._id === id || a.roomKey === id || (a.txnId && a.txnId === id));
+    const targetFp = appt ? getAppointmentFingerprint(appt) : "";
+
     if (appt) {
         appt.status = "Cancelled";
     }
 
-    // Try API
+    // Try Relative Backend API first, then Live Fallback
     const token = localStorage.getItem("token") || localStorage.getItem("user");
+    const headers = token ? { "Authorization": `Bearer ${token}` } : {};
+
+    let cancelledOnBackend = false;
     try {
-        await fetch(`https://mindcare-1-r9a5.onrender.com/api/appointment/cancel/${id}`, {
-            method: "PUT",
-            headers: { "Authorization": `Bearer ${token}` }
-        });
-    } catch (e) {
-        console.warn("Cancel API offline, updating locally");
+        const resLocal = await fetch(`/api/appointment/cancel/${id}`, { method: "PUT", headers });
+        const dataLocal = await resLocal.json();
+        if (dataLocal.success) cancelledOnBackend = true;
+    } catch (e) {}
+
+    if (!cancelledOnBackend) {
+        try {
+            await fetch(`https://mindcare-1-r9a5.onrender.com/api/appointment/cancel/${id}`, {
+                method: "PUT",
+                headers
+            });
+        } catch (e) {
+            console.warn("Cancel API offline, updating locally");
+        }
     }
 
-    // Save to LocalStorage
+    // Save to User LocalStorage
     const userObj = JSON.parse(localStorage.getItem("user") || "null");
     const userId = userObj ? (userObj.id || userObj._id || userObj.email) : "default";
     const localKey = `mindcare_user_appointments_${userId}`;
-    localStorage.setItem(localKey, JSON.stringify(currentLoadedAppointments));
+
+    let userAppts = JSON.parse(localStorage.getItem(localKey) || "[]");
+    userAppts = userAppts.map(a => {
+        const fp = getAppointmentFingerprint(a);
+        if (a._id === id || a.roomKey === id || (targetFp && fp === targetFp)) {
+            return { ...a, status: "Cancelled" };
+        }
+        return a;
+    });
+    localStorage.setItem(localKey, JSON.stringify(userAppts));
 
     // Update global appointments store for therapist portal sync
     let globalAppts = JSON.parse(localStorage.getItem("mindcare_all_global_appointments") || "[]");
     globalAppts = globalAppts.map(a => {
-        if (a._id === id || a.roomKey === id) {
+        const fp = getAppointmentFingerprint(a);
+        if (a._id === id || a.roomKey === id || (targetFp && fp === targetFp)) {
             return { ...a, status: "Cancelled" };
         }
         return a;
