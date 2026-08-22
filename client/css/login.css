@@ -13,19 +13,20 @@ Google Font
 html {
     min-height: 100%;
     overflow-y: auto;
+    overflow-x: hidden;
 }
 
 body{
     display:flex;
     flex-direction:column;
-    justify-content:center;
+    justify-content:flex-start;
     align-items:center;
     min-height:100vh;
     background:radial-gradient(circle at top left, #312e81, #0f172a 60%, #090d16);
     overflow-y:auto;
     overflow-x:hidden;
     position:relative;
-    padding:40px 0;
+    padding:24px 16px;
 }
 
 /* Background Glowing Orbs */
@@ -61,22 +62,24 @@ Container & Glass Card
 
 .container{
     width:100%;
+    max-width:100%;
     display:flex;
     justify-content:center;
     align-items:center;
-    padding:0 20px;
+    padding:0;
     z-index:2;
-    margin:auto 0;
+    margin:auto;
 }
 
 .login-card{
-    width:420px;
+    width:460px;
+    max-width:100%;
     background:rgba(255,255,255,0.07);
     backdrop-filter:blur(24px);
     -webkit-backdrop-filter:blur(24px);
     border:1px solid rgba(255,255,255,0.14);
-    border-radius:24px;
-    padding:42px 36px;
+    border-radius:20px;
+    padding:30px 28px;
     color:#fff;
     box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);
     animation:fadeIn .8s ease;
@@ -95,18 +98,18 @@ Container & Glass Card
 
 .logo{
     text-align:center;
-    margin-bottom:16px;
+    margin-bottom:12px;
 }
 
 .logo i{
-    font-size:46px;
+    font-size:38px;
     color:#ff3b5c;
     filter:drop-shadow(0 4px 12px rgba(255,59,92,0.4));
 }
 
 .logo h2{
-    margin-top:6px;
-    font-size:26px;
+    margin-top:4px;
+    font-size:24px;
     font-weight:700;
     letter-spacing:0.5px;
     color:#ffffff;
@@ -114,35 +117,54 @@ Container & Glass Card
 
 .login-card h1{
     text-align:center;
-    margin-bottom:6px;
-    font-size:24px;
+    margin-bottom:4px;
+    font-size:22px;
     font-weight:600;
     color:#ffffff;
 }
 
 .login-card p{
     text-align:center;
-    margin-bottom:28px;
+    margin-bottom:20px;
     color:#94a3b8;
-    font-size:13.5px;
+    font-size:13px;
 }
 
 /*==========================
-Input Fields
+Input Fields & Form Rows
 ==========================*/
+
+.form-row{
+    display:flex;
+    gap:12px;
+    margin-bottom:14px;
+}
+
+.form-row .input-box{
+    flex:1;
+    margin-bottom:0;
+}
+
+.form-row .input-box.flex-1-5{
+    flex:1.5;
+}
+
+.form-row .input-box.flex-0-8{
+    flex:0.8;
+}
 
 .input-box{
     position:relative;
-    margin-bottom:20px;
+    margin-bottom:14px;
 }
 
 .input-box > i:first-child{
     position:absolute;
     top:50%;
-    left:16px;
+    left:14px;
     transform:translateY(-50%);
     color:#818cf8;
-    font-size:16px;
+    font-size:15px;
     z-index:2;
     pointer-events:none;
 }
@@ -150,11 +172,11 @@ Input Fields
 .input-box input,
 .input-box select{
     width:100%;
-    padding:14px 45px 14px 45px;
+    padding:12px 42px 12px 42px;
     border:1px solid rgba(255,255,255,0.15);
     outline:none;
-    border-radius:14px;
-    font-size:14.5px;
+    border-radius:12px;
+    font-size:14px;
     background:rgba(15,23,42,0.6);
     color:#ffffff;
     transition:all 0.25s ease;
@@ -176,9 +198,10 @@ Input Fields
     box-shadow:0 0 0 4px rgba(99,102,241,0.2);
 }
 
-#togglePassword{
+#togglePassword,
+#toggleConfirmPassword{
     position:absolute;
-    right:16px;
+    right:14px;
     top:50%;
     transform:translateY(-50%);
     cursor:pointer;
@@ -192,11 +215,13 @@ Input Fields
     transition:color 0.2s ease;
 }
 
-#togglePassword:hover{
+#togglePassword:hover,
+#toggleConfirmPassword:hover{
     color:#ffffff;
 }
 
-#togglePassword i{
+#togglePassword i,
+#toggleConfirmPassword i{
     position:static !important;
     left:auto !important;
     top:auto !important;
@@ -213,7 +238,7 @@ Options
     display:flex;
     justify-content:space-between;
     align-items:center;
-    margin-bottom:24px;
+    margin-bottom:18px;
     font-size:13px;
     color:#cbd5e1;
 }
@@ -250,12 +275,12 @@ Login Button
 
 .login-btn{
     width:100%;
-    padding:15px;
+    padding:13px;
     border:none;
-    border-radius:14px;
+    border-radius:12px;
     background:linear-gradient(135deg, #6366f1, #4f46e5);
     color:#ffffff;
-    font-size:16px;
+    font-size:15px;
     font-weight:600;
     cursor:pointer;
     box-shadow:0 8px 25px rgba(99,102,241,0.38);
@@ -272,9 +297,9 @@ Links
 ==========================*/
 
 .register{
-    margin-top:24px;
+    margin-top:16px;
     text-align:center;
-    font-size:13.5px;
+    font-size:13px;
     color:#94a3b8;
 }
 
@@ -297,7 +322,7 @@ Links
     gap:8px;
     justify-content:center;
     width:100%;
-    margin-top:20px;
+    margin-top:14px;
     color:#cbd5e1;
     font-size:13px;
     text-decoration:none;
@@ -312,10 +337,20 @@ Links
 Responsive
 ==========================*/
 
-@media(max-width:500px){
+@media(max-width:540px){
     .login-card{
         width:100%;
-        padding:32px 24px;
+        padding:22px 18px;
+    }
+
+    .form-row{
+        flex-direction:column;
+        gap:14px;
+        margin-bottom:0;
+    }
+
+    .form-row .input-box{
+        margin-bottom:14px;
     }
 
     .options{
