@@ -524,7 +524,7 @@ async function cancelAppointment(id) {
     }
 
     const appt = currentLoadedAppointments.find(a => a._id === id || a.roomKey === id || (a.txnId && a.txnId === id));
-    const targetFp = appt ? getAppointmentFingerprint(appt) : "";
+    const targetId = (appt && appt._id) ? appt._id : id;
 
     if (appt) {
         appt.status = "Cancelled";
@@ -542,14 +542,14 @@ async function cancelAppointment(id) {
 
     let cancelledOnBackend = false;
     try {
-        const resLocal = await fetch(`/api/appointment/cancel/${id}`, { method: "PUT", headers });
+        const resLocal = await fetch(`/api/appointment/cancel/${targetId}`, { method: "PUT", headers });
         const dataLocal = await resLocal.json();
         if (dataLocal.success) cancelledOnBackend = true;
     } catch (e) {}
 
     if (!cancelledOnBackend) {
         try {
-            await fetch(`https://mindcare-1-r9a5.onrender.com/api/appointment/cancel/${id}`, {
+            await fetch(`https://mindcare-1-r9a5.onrender.com/api/appointment/cancel/${targetId}`, {
                 method: "PUT",
                 headers
             });

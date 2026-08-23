@@ -92,12 +92,15 @@ async function markCurrentCallAttended() {
         });
         localStorage.setItem("mindcare_all_global_appointments", JSON.stringify(globalAppts));
 
+        const targetAppt = userAppts.find(a => a.roomKey === roomKeyParam || (doctorName && (a.therapist || "").toLowerCase().trim().includes(doctorName)));
+        const targetId = (targetAppt && targetAppt._id) ? targetAppt._id : roomKeyParam;
+
         // Call backend API to update MongoDB document status globally
         try {
-            await fetch(`/api/appointment/complete/${roomKeyParam}`, { method: "PUT" });
+            await fetch(`/api/appointment/complete/${targetId}`, { method: "PUT" });
         } catch (e) {
             try {
-                await fetch(`https://mindcare-1-r9a5.onrender.com/api/appointment/complete/${roomKeyParam}`, { method: "PUT" });
+                await fetch(`https://mindcare-1-r9a5.onrender.com/api/appointment/complete/${targetId}`, { method: "PUT" });
             } catch (err) {}
         }
     } catch (e) {

@@ -827,8 +827,9 @@ async function cancelAppointment(id) {
     const confirmCancel = confirm("Are you sure you want to cancel this appointment?");
     if (!confirmCancel) return;
 
-    // Update in memory array
-    const appt = userAppointments.find(a => a._id === id);
+    const appt = userAppointments.find(a => a._id === id || a.roomKey === id);
+    const targetId = (appt && appt._id) ? appt._id : id;
+
     if (appt) {
         appt.status = "Cancelled";
         if (appt.roomKey) {
@@ -841,12 +842,19 @@ async function cancelAppointment(id) {
 
     // Attempt API Call
     try {
-        await fetch(`https://mindcare-1-r9a5.onrender.com/api/appointment/cancel/${id}`, {
+        await fetch(`/api/appointment/cancel/${targetId}`, {
             method: "PUT",
             headers: { "Authorization": `Bearer ${token}` }
         });
-    } catch (error) {
-        console.warn("Cancel API call offline, updating LocalStorage fallback:", error);
+    } catch (e) {
+        try {
+            await fetch(`https://mindcare-1-r9a5.onrender.com/api/appointment/cancel/${targetId}`, {
+                method: "PUT",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+        } catch (error) {
+            console.warn("Cancel API call offline, updating LocalStorage fallback:", error);
+        }
     }
 
     // Save updated list to LocalStorage

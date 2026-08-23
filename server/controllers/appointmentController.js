@@ -135,21 +135,28 @@ exports.completeAppointment = async (req, res) => {
     try {
         const id = req.params.id;
         let appointment = null;
+
         if (mongoose.Types.ObjectId.isValid(id)) {
             appointment = await Appointment.findById(id);
         }
+
         if (!appointment) {
             appointment = await Appointment.findOne({
                 $or: [
                     { roomKey: id },
-                    { _id: id }
+                    { txnId: id }
                 ]
             });
         }
+
         if (!appointment) {
-            return res.status(404).json({
-                success: false,
-                message: "Appointment not found"
+            await Appointment.updateMany(
+                { $or: [{ roomKey: id }, { txnId: id }] },
+                { $set: { attended: true, status: "Therapy Session Completed" } }
+            );
+            return res.status(200).json({
+                success: true,
+                message: "Therapy session marked as completed"
             });
         }
 
@@ -174,11 +181,30 @@ exports.completeAppointment = async (req, res) => {
 // ================= Cancel Appointment =================
 exports.cancelAppointment = async (req, res) => {
     try {
-        const appointment = await Appointment.findById(req.params.id);
+        const id = req.params.id;
+        let appointment = null;
+
+        if (mongoose.Types.ObjectId.isValid(id)) {
+            appointment = await Appointment.findById(id);
+        }
+
         if (!appointment) {
-            return res.status(404).json({
-                success: false,
-                message: "Appointment not found"
+            appointment = await Appointment.findOne({
+                $or: [
+                    { roomKey: id },
+                    { txnId: id }
+                ]
+            });
+        }
+
+        if (!appointment) {
+            await Appointment.updateMany(
+                { $or: [{ roomKey: id }, { txnId: id }] },
+                { $set: { status: "Cancelled" } }
+            );
+            return res.status(200).json({
+                success: true,
+                message: "Appointment Cancelled Successfully"
             });
         }
 
