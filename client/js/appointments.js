@@ -178,10 +178,10 @@ function getAppointmentFingerprint(appt) {
     if (appt.roomKey) return "room_" + appt.roomKey;
     const doc = (appt.therapist || appt.doctorName || appt.therapistName || "").toLowerCase().replace(/^dr\.\s*/i, "").trim();
     const dt = (appt.date || "").trim();
-    const tm = (appt.time || "").trim();
-    const em = (appt.email || appt.userEmail || "").toLowerCase().trim();
+    const rawTime = (appt.time || "").replace(/\s*\([^)]*\)/g, "").trim().toLowerCase();
+    const tm = rawTime.replace(/^0/, "").replace(/\s+/g, "");
     if (doc && dt && tm) {
-        return `fp_${doc}_${dt}_${tm}_${em}`;
+        return `fp_${doc}_${dt}_${tm}`;
     }
     return appt._id || "";
 }
@@ -268,10 +268,15 @@ async function loadAppointments() {
         if (a) {
             const key = getAppointmentFingerprint(a);
             if (key) {
-                const currentStatus = (a.status || "").toLowerCase().trim();
                 const existing = uniqueMap[key];
-                if (!existing || currentStatus === "cancelled" || currentStatus === "confirmed" || (a._id && !existing._id)) {
+                if (!existing) {
                     uniqueMap[key] = a;
+                } else {
+                    const existingStatus = (existing.status || "").toLowerCase().trim();
+                    const newStatus = (a.status || "").toLowerCase().trim();
+                    if (newStatus === "cancelled" || a.attended === true || (a._id && !existing._id)) {
+                        uniqueMap[key] = a;
+                    }
                 }
             }
         }
