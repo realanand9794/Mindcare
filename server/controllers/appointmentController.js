@@ -133,7 +133,19 @@ exports.getAppointments = async (req, res) => {
 // ================= Complete Session =================
 exports.completeAppointment = async (req, res) => {
     try {
-        const appointment = await Appointment.findById(req.params.id);
+        const id = req.params.id;
+        let appointment = null;
+        if (mongoose.Types.ObjectId.isValid(id)) {
+            appointment = await Appointment.findById(id);
+        }
+        if (!appointment) {
+            appointment = await Appointment.findOne({
+                $or: [
+                    { roomKey: id },
+                    { _id: id }
+                ]
+            });
+        }
         if (!appointment) {
             return res.status(404).json({
                 success: false,

@@ -45,7 +45,7 @@ mongoose.connect(process.env.MONGO_URI || "mongodb://127.0.0.1:27017/mindcare")
         console.error("MongoDB Connection Error:", err);
     });
 
-const SYSTEM_BUILD_VERSION = "10.0.0";
+const SYSTEM_BUILD_VERSION = "11.0.0";
 
 // API Health Check Route
 app.get("/api/health", (req, res) => {
@@ -66,6 +66,44 @@ io.on("connection", (socket) => {
         if (!userId) return;
         socket.join(userId);
         console.log("User joined room:", userId);
+    });
+
+    // WebRTC Real-Time Call Signaling
+    socket.on("join-call-room", (data) => {
+        const { roomKey, role } = data || {};
+        if (roomKey) {
+            socket.join(roomKey);
+            console.log(`Socket ${socket.id} joined call room: ${roomKey} as ${role || 'participant'}`);
+            socket.to(roomKey).emit("user-connected-to-call", { role, socketId: socket.id });
+        }
+    });
+
+    socket.on("call-offer", (data) => {
+        const { roomKey, offer } = data || {};
+        if (roomKey) {
+            socket.to(roomKey).emit("call-offer", { offer, socketId: socket.id });
+        }
+    });
+
+    socket.on("call-answer", (data) => {
+        const { roomKey, answer } = data || {};
+        if (roomKey) {
+            socket.to(roomKey).emit("call-answer", { answer, socketId: socket.id });
+        }
+    });
+
+    socket.on("ice-candidate", (data) => {
+        const { roomKey, candidate } = data || {};
+        if (roomKey) {
+            socket.to(roomKey).emit("ice-candidate", { candidate, socketId: socket.id });
+        }
+    });
+
+    socket.on("end-call-room", (data) => {
+        const { roomKey } = data || {};
+        if (roomKey) {
+            socket.to(roomKey).emit("call-ended-by-peer");
+        }
     });
 
     // Private message handling & persistence

@@ -23,14 +23,11 @@
         <!-- Call Area -->
         <div class="video-area">
 
-            <div class="doctor-video">
-
-                <img id="doctorAvatar" src="https://randomuser.me/api/portraits/women/44.jpg" alt="Doctor Avatar">
-
-                <h3 id="doctorNameHeader">Dr. Sarah Wilson</h3>
-
-                <span id="callStatusBadge" class="live">● Live Session</span>
-
+            <div class="doctor-video" style="position: relative; overflow: hidden;">
+                <video id="remoteVideo" autoplay playsinline style="width:100%; height:100%; object-fit:cover; position:absolute; inset:0; z-index:1; border-radius:16px; background:#0f172a; display:none;"></video>
+                <img id="doctorAvatar" src="https://randomuser.me/api/portraits/women/44.jpg" alt="Doctor Avatar" style="position:relative; z-index:2;">
+                <h3 id="doctorNameHeader" style="position:relative; z-index:2;">Dr. Sarah Wilson</h3>
+                <span id="callStatusBadge" class="live" style="position:relative; z-index:2;">● Live Session</span>
             </div>
 
             <div class="patient-video" id="patientVideoBox">
@@ -40,27 +37,24 @@
             </div>
 
             <div class="controls">
-
                 <button id="micBtn" title="Toggle Microphone">
                     <i class="fas fa-microphone"></i>
                 </button>
-
                 <button id="cameraBtn" title="Toggle Camera">
                     <i class="fas fa-video"></i>
                 </button>
-
                 <button id="endBtn" class="end-call" title="End Call">
                     <i class="fas fa-phone-slash"></i>
                 </button>
-
             </div>
 
         </div>
 
     </div>
 
-    <script src="js/theme.js"></script>
-    <script src="js/video.js"></script>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script src="js/theme.js?v=11.0"></script>
+    <script src="js/video.js?v=11.0"></script>
 
 </body>
 

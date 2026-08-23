@@ -15,8 +15,17 @@ const callStatusBadge = document.getElementById("callStatusBadge");
 const patientVideoBox = document.getElementById("patientVideoBox");
 
 let localStream = null;
+let peerConnection = null;
 let micState = true;
 let cameraState = true;
+let socket = null;
+
+const rtcConfig = {
+    iceServers: [
+        { urls: "stun:stun.l.google.com:19302" },
+        { urls: "stun:stun1.l.google.com:19302" }
+    ]
+};
 
 const defaultImages = {
     "dr. sarah wilson": "https://randomuser.me/api/portraits/women/44.jpg",
@@ -53,11 +62,8 @@ setInterval(() => {
     timer.innerHTML = `${min}:${sec}`;
 }, 1000);
 
-// ================================
-// Mode Initialization
-// ================================
-
-function markCurrentCallAttended() {
+// Backend API Attendance & Completion Marker
+async function markCurrentCallAttended() {
     try {
         const userObj = JSON.parse(localStorage.getItem("user") || "null");
         const userId = userObj ? (userObj.id || userObj._id || userObj.email) : "default";
@@ -74,7 +80,6 @@ function markCurrentCallAttended() {
             }
             return a;
         });
-
         localStorage.setItem(localKey, JSON.stringify(userAppts));
 
         let globalAppts = JSON.parse(localStorage.getItem("mindcare_all_global_appointments") || "[]");
@@ -86,6 +91,15 @@ function markCurrentCallAttended() {
             return a;
         });
         localStorage.setItem("mindcare_all_global_appointments", JSON.stringify(globalAppts));
+
+        // Call backend API to update MongoDB document status globally
+        try {
+            await fetch(`/api/appointment/complete/${roomKeyParam}`, { method: "PUT" });
+        } catch (e) {
+            try {
+                await fetch(`https://mindcare-1-r9a5.onrender.com/api/appointment/complete/${roomKeyParam}`, { method: "PUT" });
+            } catch (err) {}
+        }
     } catch (e) {
         console.warn("Failed to auto mark attendance:", e);
     }
@@ -185,40 +199,127 @@ function checkAndValidateAccess() {
     return true;
 }
 
+// WebRTC Peer Connection Setup & Socket.io Signaling
+function createPeerConnection() {
+    if (peerConnection) return peerConnection;
+    peerConnection = new RTCPeerConnection(rtcConfig);
+
+    if (localStream) {
+        localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+    }
+
+    peerConnection.ontrack = (event) => {
+        const remoteVideo = document.getElementById("remoteVideo");
+        const doctorAvatar = document.getElementById("doctorAvatar");
+        if (remoteVideo) {
+            remoteVideo.srcObject = event.streams[0];
+            remoteVideo.style.display = "block";
+            if (doctorAvatar) doctorAvatar.style.display = "none";
+        }
+    };
+
+    peerConnection.onicecandidate = (event) => {
+        if (event.candidate && socket) {
+            socket.emit("ice-candidate", { roomKey: roomKeyParam, candidate: event.candidate });
+        }
+    };
+
+    return peerConnection;
+}
+
+function initSocketSignaling() {
+    if (typeof io !== "undefined") {
+        try {
+            socket = io();
+        } catch (e) {
+            try {
+                socket = io("https://mindcare-1-r9a5.onrender.com");
+            } catch (err) {}
+        }
+    }
+
+    if (!socket) return;
+
+    socket.emit("join-call-room", { roomKey: roomKeyParam, role: roleParam });
+
+    socket.on("user-connected-to-call", async () => {
+        const pc = createPeerConnection();
+        try {
+            const offer = await pc.createOffer();
+            await pc.setLocalDescription(offer);
+            socket.emit("call-offer", { roomKey: roomKeyParam, offer });
+        } catch (e) {
+            console.warn("Error creating WebRTC offer:", e);
+        }
+    });
+
+    socket.on("call-offer", async (data) => {
+        const pc = createPeerConnection();
+        try {
+            await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
+            const answer = await pc.createAnswer();
+            await pc.setLocalDescription(answer);
+            socket.emit("call-answer", { roomKey: roomKeyParam, answer });
+        } catch (e) {
+            console.warn("Error handling WebRTC offer:", e);
+        }
+    });
+
+    socket.on("call-answer", async (data) => {
+        const pc = createPeerConnection();
+        try {
+            await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
+        } catch (e) {
+            console.warn("Error handling WebRTC answer:", e);
+        }
+    });
+
+    socket.on("ice-candidate", async (data) => {
+        if (peerConnection && data.candidate) {
+            try {
+                await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
+            } catch (e) {
+                console.warn("Error adding ICE candidate:", e);
+            }
+        }
+    });
+
+    socket.on("call-ended-by-peer", () => {
+        alert("📞 Peer has left the consultation session.");
+        if (endBtn) endBtn.click();
+    });
+}
+
 async function initCall() {
     if (!checkAndValidateAccess()) return;
-    markCurrentCallAttended();
+
     if (isAudioMode) {
-        // Voice Call Setup
         document.title = "MindCare Voice Consultation";
         if (callStatusBadge) {
             callStatusBadge.innerHTML = '● Voice Call Active';
             callStatusBadge.style.background = "#059669";
         }
-
-        // Hide Camera button & Patient Video box for pure audio experience
         if (cameraBtn) cameraBtn.style.display = "none";
         if (patientVideoBox) patientVideoBox.style.display = "none";
 
-        // Request Audio-only WebRTC Stream
         try {
             localStream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
         } catch (err) {
             console.warn("Microphone access denied or unavailable:", err.message);
         }
 
+        initSocketSignaling();
+
         setTimeout(() => {
             alert(`📞 Connected on Voice Call with ${doctorNameHeader ? doctorNameHeader.innerText : "Therapist"}`);
         }, 600);
 
     } else {
-        // Video Call Setup
         document.title = "MindCare Video Consultation";
         if (callStatusBadge) {
             callStatusBadge.innerHTML = '● Live Video Call';
         }
 
-        // Request Video + Audio WebRTC Stream
         try {
             localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
             const videoElem = document.getElementById("localVideo");
@@ -232,13 +333,15 @@ async function initCall() {
             console.warn("Camera/Mic access denied or unavailable:", err.message);
         }
 
+        initSocketSignaling();
+
         setTimeout(() => {
             alert(`📹 Connected on Video Call with ${doctorNameHeader ? doctorNameHeader.innerText : "Therapist"}`);
         }, 600);
     }
 }
 
-// Mic Mute Toggle
+// Controls
 if (micBtn) {
     micBtn.addEventListener("click", () => {
         micState = !micState;
@@ -255,7 +358,6 @@ if (micBtn) {
     });
 }
 
-// Camera Toggle (Video Call Only)
 if (cameraBtn) {
     cameraBtn.addEventListener("click", () => {
         cameraState = !cameraState;
@@ -274,19 +376,26 @@ if (cameraBtn) {
 
 // End Call Handler
 if (endBtn) {
-    endBtn.addEventListener("click", () => {
+    endBtn.addEventListener("click", async () => {
         const doctorName = doctorNameHeader ? doctorNameHeader.innerText : "Therapist";
         if (confirm(`Do you want to end this consultation with ${doctorName}?`)) {
+            if (socket) {
+                socket.emit("end-call-room", { roomKey: roomKeyParam });
+            }
+
             if (localStream) {
                 localStream.getTracks().forEach(track => track.stop());
             }
+            if (peerConnection) {
+                peerConnection.close();
+            }
+
+            await markCurrentCallAttended();
 
             // Save Call Log & Recording to Specific Session Room Storage
-            const urlParams = new URLSearchParams(window.location.search);
-            const roomKey = urlParams.get("room");
             const userObj = JSON.parse(localStorage.getItem("user") || "null");
             const userId = userObj ? (userObj.id || userObj._id || userObj.email) : "default";
-            const storageKey = roomKey ? `mindcare_chat_room_${roomKey}` : `mindcare_chat_${userId}_${encodeURIComponent(doctorName)}`;
+            const storageKey = roomKeyParam ? `mindcare_chat_room_${roomKeyParam}` : `mindcare_chat_${userId}_${encodeURIComponent(doctorName)}`;
 
             const min = Math.floor(seconds / 60);
             const sec = seconds % 60;
@@ -310,11 +419,11 @@ if (endBtn) {
 
             const isTherapistRole = (urlParams.get("role") || "").toLowerCase() === "therapist";
             if (isTherapistRole) {
-                alert(`🎉 Consultation Ended!\nCall duration: ${durationStr}\n\nCall log & recording saved.`);
+                alert(`🎉 Consultation Ended!\nCall duration: ${durationStr}\n\nSession marked as Completed. Moving to Completed Sessions.`);
                 window.location.href = "therapist-dashboard.html";
             } else {
-                alert(`🎉 Consultation Ended!\nCall duration: ${durationStr}\n\nCall log & recording saved to your chat with ${doctorName}.`);
-                window.location.href = `live-chat.html?therapist=${encodeURIComponent(doctorName)}`;
+                alert(`🎉 Consultation Ended!\nCall duration: ${durationStr}\n\nCall log & recording saved to your chat.`);
+                window.location.href = `live-chat.html?room=${roomKeyParam}&therapist=${encodeURIComponent(doctorName)}`;
             }
         }
     });
