@@ -56,12 +56,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function getAppointmentFingerprint(appt) {
     if (!appt) return "";
-    const doc = (appt.therapist || appt.doctorName || appt.therapistName || "").toLowerCase().replace(/^dr\.\s*/i, "").trim();
-    const dt = (appt.date || "").trim();
-    const rawTime = (appt.time || "").replace(/\s*\([^)]*\)/g, "").trim().toLowerCase();
-    const tm = rawTime.replace(/^0/, "").replace(/\s+/g, "");
+
+    let rawDoc = appt.therapist || appt.doctorName || appt.therapistName || appt.name || "";
+    let doc = rawDoc.toLowerCase().replace(/^dr\.\s*/i, "").replace(/[^a-z0-9]/g, "");
+
+    let rawDate = (appt.date || appt.appointmentDate || "").toString().trim();
+    let dt = "";
+    if (rawDate) {
+        const dateParts = rawDate.split(/[-/.]/).map(p => p.trim());
+        if (dateParts.length === 3) {
+            let y, m, d;
+            if (dateParts[0].length === 4) {
+                y = dateParts[0]; m = dateParts[1].padStart(2, '0'); d = dateParts[2].padStart(2, '0');
+            } else {
+                d = dateParts[0].padStart(2, '0'); m = dateParts[1].padStart(2, '0'); y = dateParts[2];
+            }
+            dt = `${y}-${m}-${d}`;
+        } else {
+            dt = rawDate.replace(/[^0-9]/g, "");
+        }
+    }
+
+    let rawTime = (appt.time || appt.timeSlot || appt.selectedSlot || "").toString().replace(/\s*\([^)]*\)/g, "").trim().toLowerCase();
+    let tm = rawTime.replace(/^0/, "").replace(/\s+/g, "");
+
     if (doc && dt && tm) {
         return `fp_${doc}_${dt}_${tm}`;
+    }
+    if (doc && dt) {
+        return `fp_${doc}_${dt}`;
     }
     if (appt.txnId) return "txn_" + appt.txnId;
     if (appt.roomKey) return "room_" + appt.roomKey;
