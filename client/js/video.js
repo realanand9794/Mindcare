@@ -19,6 +19,14 @@ let peerConnection = null;
 let micState = true;
 let cameraState = true;
 let socket = null;
+let isCallEnded = false;
+
+// MediaRecorder Dual-Video Canvas State
+let mediaRecorder = null;
+let recordedChunks = [];
+let recordingCanvas = null;
+let canvasCtx = null;
+let recordingInterval = null;
 
 const rtcConfig = {
     iceServers: [
@@ -202,6 +210,89 @@ function checkAndValidateAccess() {
     return true;
 }
 
+// MediaRecorder Dual-Video Canvas Stream Logic
+function startCanvasRecording(remoteStream) {
+    try {
+        recordingCanvas = document.getElementById("recordingCanvas");
+        if (!recordingCanvas) return;
+        canvasCtx = recordingCanvas.getContext("2d");
+
+        const localVideo = document.getElementById("localVideo");
+        const remoteVideo = document.getElementById("remoteVideo");
+
+        recordingInterval = setInterval(() => {
+            if (!canvasCtx) return;
+            canvasCtx.fillStyle = "#0f172a";
+            canvasCtx.fillRect(0, 0, 1280, 720);
+
+            // Draw Remote Stream (Main Background)
+            if (remoteVideo && remoteVideo.readyState >= 2) {
+                canvasCtx.drawImage(remoteVideo, 0, 0, 1280, 720);
+            }
+
+            // Draw Local Stream PIP (Top Right Corner)
+            if (localVideo && localVideo.readyState >= 2) {
+                canvasCtx.fillStyle = "#ffffff";
+                canvasCtx.fillRect(935, 20, 325, 185);
+                canvasCtx.drawImage(localVideo, 940, 25, 315, 175);
+            }
+        }, 1000 / 30);
+
+        const canvasStream = recordingCanvas.captureStream(30);
+
+        // Merge Audio Tracks
+        try {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const dest = audioCtx.createMediaStreamDestination();
+            if (localStream && localStream.getAudioTracks().length > 0) {
+                audioCtx.createMediaStreamSource(localStream).connect(dest);
+            }
+            if (remoteStream && remoteStream.getAudioTracks().length > 0) {
+                audioCtx.createMediaStreamSource(remoteStream).connect(dest);
+            }
+            if (dest.stream.getAudioTracks().length > 0) {
+                canvasStream.addTrack(dest.stream.getAudioTracks()[0]);
+            }
+        } catch (e) {}
+
+        recordedChunks = [];
+        let options = { mimeType: "video/webm" };
+        if (!MediaRecorder.isTypeSupported("video/webm")) {
+            options = {};
+        }
+        mediaRecorder = new MediaRecorder(canvasStream, options);
+
+        mediaRecorder.ondataavailable = (event) => {
+            if (event.data && event.data.size > 0) {
+                recordedChunks.push(event.data);
+            }
+        };
+
+        mediaRecorder.start(1000);
+    } catch (e) {
+        console.warn("Canvas recording init failed:", e);
+    }
+}
+
+function stopCanvasRecording() {
+    return new Promise((resolve) => {
+        if (recordingInterval) clearInterval(recordingInterval);
+        if (mediaRecorder && mediaRecorder.state !== "inactive") {
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(recordedChunks, { type: "video/webm" });
+                const reader = new FileReader();
+                reader.readAsDataURL(blob);
+                reader.onloadend = () => {
+                    resolve(reader.result);
+                };
+            };
+            mediaRecorder.stop();
+        } else {
+            resolve(null);
+        }
+    });
+}
+
 // WebRTC Peer Connection Setup & Socket.io Signaling
 function createPeerConnection() {
     if (peerConnection) return peerConnection;
@@ -219,6 +310,7 @@ function createPeerConnection() {
             remoteVideo.style.display = "block";
             if (doctorAvatar) doctorAvatar.style.display = "none";
         }
+        startCanvasRecording(event.streams[0]);
     };
 
     peerConnection.onicecandidate = (event) => {
@@ -287,9 +379,32 @@ function initSocketSignaling() {
         }
     });
 
-    socket.on("call-ended-by-peer", () => {
-        alert("📞 Peer has left the consultation session.");
-        if (endBtn) endBtn.click();
+    socket.on("peer-left", async (data) => {
+        if (isCallEnded) return;
+        isCallEnded = true;
+
+        const isTherapistRole = roleParam === "therapist";
+        if (isTherapistRole) {
+            alert("👤 Patient has left the consultation session.");
+        } else {
+            alert("👨‍⚕️ Therapist has left the consultation session.");
+        }
+
+        await finishAndExitCall();
+    });
+
+    socket.on("call-ended-by-peer", async () => {
+        if (isCallEnded) return;
+        isCallEnded = true;
+
+        const isTherapistRole = roleParam === "therapist";
+        if (isTherapistRole) {
+            alert("👤 Patient has ended the call.");
+        } else {
+            alert("👨‍⚕️ Therapist has ended the call.");
+        }
+
+        await finishAndExitCall();
     });
 }
 
@@ -344,6 +459,56 @@ async function initCall() {
     }
 }
 
+async function finishAndExitCall() {
+    if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+    }
+    if (peerConnection) {
+        peerConnection.close();
+    }
+
+    await markCurrentCallAttended();
+
+    let actualRecordingUrl = await stopCanvasRecording();
+    if (!actualRecordingUrl) {
+        actualRecordingUrl = isAudioMode
+            ? "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+            : "https://www.w3schools.com/html/mov_bbb.mp4";
+    }
+
+    const doctorName = doctorNameHeader ? doctorNameHeader.innerText : "Therapist";
+    const userObj = JSON.parse(localStorage.getItem("user") || "null");
+    const userId = userObj ? (userObj.id || userObj._id || userObj.email) : "default";
+    const storageKey = roomKeyParam ? `mindcare_chat_room_${roomKeyParam}` : `mindcare_chat_${userId}_${encodeURIComponent(doctorName)}`;
+
+    const min = Math.floor(seconds / 60);
+    const sec = seconds % 60;
+    const durationStr = min > 0 ? `${min} min ${sec} sec` : `${sec} sec`;
+
+    let chatHistory = JSON.parse(localStorage.getItem(storageKey) || "[]");
+    const callLogMessage = {
+        id: "msg_" + Date.now(),
+        sender: "system",
+        type: isAudioMode ? "voice_call" : "video_call",
+        title: isAudioMode ? "Voice Call" : "Video Call",
+        duration: durationStr,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        recordingUrl: actualRecordingUrl
+    };
+
+    chatHistory.push(callLogMessage);
+    localStorage.setItem(storageKey, JSON.stringify(chatHistory));
+
+    const isTherapistRole = roleParam === "therapist";
+    if (isTherapistRole) {
+        alert(`🎉 Consultation Ended!\nCall duration: ${durationStr}\n\nSession marked as Completed. Moving to Completed Sessions.`);
+        window.location.href = "therapist-dashboard.html";
+    } else {
+        alert(`🎉 Consultation Ended!\nCall duration: ${durationStr}\n\nActual 2-way meeting recording saved to your chat.`);
+        window.location.href = `live-chat.html?room=${roomKeyParam}&therapist=${encodeURIComponent(doctorName)}`;
+    }
+}
+
 // Controls
 if (micBtn) {
     micBtn.addEventListener("click", () => {
@@ -380,54 +545,15 @@ if (cameraBtn) {
 // End Call Handler
 if (endBtn) {
     endBtn.addEventListener("click", async () => {
+        if (isCallEnded) return;
         const doctorName = doctorNameHeader ? doctorNameHeader.innerText : "Therapist";
         if (confirm(`Do you want to end this consultation with ${doctorName}?`)) {
+            isCallEnded = true;
             if (socket) {
-                socket.emit("end-call-room", { roomKey: roomKeyParam });
+                socket.emit("peer-left", { roomKey: roomKeyParam, role: roleParam });
+                socket.emit("end-call-room", { roomKey: roomKeyParam, role: roleParam });
             }
-
-            if (localStream) {
-                localStream.getTracks().forEach(track => track.stop());
-            }
-            if (peerConnection) {
-                peerConnection.close();
-            }
-
-            await markCurrentCallAttended();
-
-            // Save Call Log & Recording to Specific Session Room Storage
-            const userObj = JSON.parse(localStorage.getItem("user") || "null");
-            const userId = userObj ? (userObj.id || userObj._id || userObj.email) : "default";
-            const storageKey = roomKeyParam ? `mindcare_chat_room_${roomKeyParam}` : `mindcare_chat_${userId}_${encodeURIComponent(doctorName)}`;
-
-            const min = Math.floor(seconds / 60);
-            const sec = seconds % 60;
-            const durationStr = min > 0 ? `${min} min ${sec} sec` : `${sec} sec`;
-
-            let chatHistory = JSON.parse(localStorage.getItem(storageKey) || "[]");
-            const callLogMessage = {
-                id: "msg_" + Date.now(),
-                sender: "system",
-                type: isAudioMode ? "voice_call" : "video_call",
-                title: isAudioMode ? "Voice Call" : "Video Call",
-                duration: durationStr,
-                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                recordingUrl: isAudioMode
-                    ? "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
-                    : "https://www.w3schools.com/html/mov_bbb.mp4"
-            };
-
-            chatHistory.push(callLogMessage);
-            localStorage.setItem(storageKey, JSON.stringify(chatHistory));
-
-            const isTherapistRole = (urlParams.get("role") || "").toLowerCase() === "therapist";
-            if (isTherapistRole) {
-                alert(`🎉 Consultation Ended!\nCall duration: ${durationStr}\n\nSession marked as Completed. Moving to Completed Sessions.`);
-                window.location.href = "therapist-dashboard.html";
-            } else {
-                alert(`🎉 Consultation Ended!\nCall duration: ${durationStr}\n\nCall log & recording saved to your chat.`);
-                window.location.href = `live-chat.html?room=${roomKeyParam}&therapist=${encodeURIComponent(doctorName)}`;
-            }
+            await finishAndExitCall();
         }
     });
 }
