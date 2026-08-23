@@ -52,6 +52,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 3. Load Scoped Patient Appointments
     loadDoctorPatientAppointments(activeDoctor);
+
+    // 4. Real-time Socket.io listener for instant new booking sync
+    if (typeof io !== "undefined") {
+        try {
+            const socket = io();
+            socket.on("appointment-booked", () => {
+                loadDoctorPatientAppointments(activeDoctor);
+            });
+        } catch (e) {}
+    }
 });
 
 function getAppointmentFingerprint(appt) {

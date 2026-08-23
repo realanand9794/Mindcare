@@ -36,6 +36,12 @@ app.use(express.static(path.join(__dirname, "../client"), {
     }
 }));
 
+// Attach Socket.io to Express req object
+app.use((req, res, next) => {
+    req.io = io;
+    next();
+});
+
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI || "mongodb://127.0.0.1:27017/mindcare")
     .then(() => {
@@ -45,7 +51,7 @@ mongoose.connect(process.env.MONGO_URI || "mongodb://127.0.0.1:27017/mindcare")
         console.error("MongoDB Connection Error:", err);
     });
 
-const SYSTEM_BUILD_VERSION = "22.0.0";
+const SYSTEM_BUILD_VERSION = "23.0.0";
 
 // API Health Check Route
 app.get("/api/health", (req, res) => {

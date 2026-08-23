@@ -49,6 +49,10 @@ exports.bookAppointment = async (req, res) => {
             attended: false
         });
 
+        if (req.io) {
+            req.io.emit("appointment-booked", appointment);
+        }
+
         res.status(201).json({
             success: true,
             message: "Appointment Booked Successfully",

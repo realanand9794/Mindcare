@@ -115,7 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Finalize Payment & Confirm Session after Direct Gateway Success
-    function finalizeGatewayPayment(customUtId, method) {
+    async function finalizeGatewayPayment(customUtId, method) {
         const userObj = JSON.parse(localStorage.getItem("user") || "null");
         const userId = userObj ? (userObj.id || userObj._id || userObj.email) : "default";
 
@@ -154,7 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 2600);
 
         // Step 3: Complete Payment & Book Session
-        setTimeout(() => {
+        setTimeout(async () => {
             if (payStep3) payStep3.style.color = "#16a34a";
             if (step3Icon) step3Icon.className = "fa-solid fa-circle-check";
 
@@ -216,56 +216,52 @@ document.addEventListener("DOMContentLoaded", () => {
             globalAppts.unshift(confirmedAppt);
             localStorage.setItem("mindcare_all_global_appointments", JSON.stringify(globalAppts));
 
-            // Post Appointment to Backend Database (Local or Live Render Server)
-            (async function syncToBackendDatabase() {
-                const token = localStorage.getItem("token");
-                const headers = { "Content-Type": "application/json" };
-                if (token) headers["Authorization"] = `Bearer ${token}`;
+            // Post Appointment to Backend Database & AWAIT completion so browser doesn't unload before DB save
+            const token = localStorage.getItem("token");
+            const headers = { "Content-Type": "application/json" };
+            if (token) headers["Authorization"] = `Bearer ${token}`;
 
-                let savedAppt = null;
+            let savedAppt = null;
 
+            try {
+                const resLocal = await fetch("/api/appointment/book", {
+                    method: "POST",
+                    headers: headers,
+                    body: JSON.stringify(confirmedAppt)
+                });
+                const dataLocal = await resLocal.json();
+                if (dataLocal.success && dataLocal.appointment) {
+                    savedAppt = dataLocal.appointment;
+                }
+            } catch (err) {
+                console.warn("Local backend sync failed/offline:", err);
+            }
+
+            if (!savedAppt) {
                 try {
-                    const resLocal = await fetch("/api/appointment/book", {
+                    const resLive = await fetch("https://mindcare-1-r9a5.onrender.com/api/appointment/book", {
                         method: "POST",
                         headers: headers,
                         body: JSON.stringify(confirmedAppt)
                     });
-                    const dataLocal = await resLocal.json();
-                    if (dataLocal.success && dataLocal.appointment) {
-                        savedAppt = dataLocal.appointment;
+                    const dataLive = await resLive.json();
+                    if (dataLive.success && dataLive.appointment) {
+                        savedAppt = dataLive.appointment;
                     }
                 } catch (err) {
-                    console.warn("Local backend sync failed/offline:", err);
+                    console.warn("Live Render server appointment sync error:", err);
                 }
+            }
 
-                if (!savedAppt) {
-                    try {
-                        const resLive = await fetch("https://mindcare-1-r9a5.onrender.com/api/appointment/book", {
-                            method: "POST",
-                            headers: headers,
-                            body: JSON.stringify(confirmedAppt)
-                        });
-                        const dataLive = await resLive.json();
-                        if (dataLive.success && dataLive.appointment) {
-                            savedAppt = dataLive.appointment;
-                        }
-                    } catch (err) {
-                        console.warn("Live Render server appointment sync error:", err);
-                    }
-                }
+            if (savedAppt) {
+                let userAppts = JSON.parse(localStorage.getItem(localKey) || "[]");
+                userAppts = userAppts.map(a => (a.txnId === confirmedAppt.txnId || a.roomKey === confirmedAppt.roomKey) ? savedAppt : a);
+                localStorage.setItem(localKey, JSON.stringify(userAppts));
 
-                if (savedAppt) {
-                    // Update user appointments store with official backend appointment object
-                    let userAppts = JSON.parse(localStorage.getItem(localKey) || "[]");
-                    userAppts = userAppts.map(a => (a.txnId === confirmedAppt.txnId || a.roomKey === confirmedAppt.roomKey) ? savedAppt : a);
-                    localStorage.setItem(localKey, JSON.stringify(userAppts));
-
-                    // Update global store
-                    let globalAppts = JSON.parse(localStorage.getItem("mindcare_all_global_appointments") || "[]");
-                    globalAppts = globalAppts.map(a => (a.txnId === confirmedAppt.txnId || a.roomKey === confirmedAppt.roomKey) ? savedAppt : a);
-                    localStorage.setItem("mindcare_all_global_appointments", JSON.stringify(globalAppts));
-                }
-            })();
+                let globalAppts = JSON.parse(localStorage.getItem("mindcare_all_global_appointments") || "[]");
+                globalAppts = globalAppts.map(a => (a.txnId === confirmedAppt.txnId || a.roomKey === confirmedAppt.roomKey) ? savedAppt : a);
+                localStorage.setItem("mindcare_all_global_appointments", JSON.stringify(globalAppts));
+            }
 
             // Remove pending booking
             localStorage.removeItem("mindcare_pending_booking");
