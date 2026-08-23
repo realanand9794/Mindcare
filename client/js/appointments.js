@@ -118,6 +118,24 @@ function computeAppointmentStatus(appointment) {
     };
 }
 
+function getAppointmentRoomKey(appt) {
+    if (!appt) return "room_default";
+    if (appt.roomKey && appt.roomKey.toString().trim() !== "") {
+        return appt.roomKey.toString().trim();
+    }
+    if (appt._id && appt._id.toString().trim() !== "") {
+        return "room_" + appt._id.toString().trim();
+    }
+    if (appt.txnId && appt.txnId.toString().trim() !== "") {
+        return "room_txn_" + appt.txnId.toString().trim();
+    }
+    const rawDoc = (appt.therapist || appt.doctorName || appt.therapistName || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+    const rawPatient = (appt.fullName || appt.patientName || appt.user || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+    const rawDate = (appt.date || "").replace(/[^0-9]/g, "");
+    const rawTime = (appt.time || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+    return `room_${rawDoc}_${rawPatient}_${rawDate}_${rawTime}`;
+}
+
 function handleSessionJoin(event, mode, dateStr, timeStr) {
     if (dateStr && timeStr) {
         try {
@@ -125,6 +143,12 @@ function handleSessionJoin(event, mode, dateStr, timeStr) {
             if (apptStartTime) {
                 const apptEndTime = new Date(apptStartTime.getTime() + 30 * 60 * 1000);
                 const now = new Date();
+
+                if (now < apptStartTime) {
+                    if (event) event.preventDefault();
+                    alert(`⏰ ${mode || 'Session'} is not available yet. Scheduled for ${dateStr} at ${timeStr}. You can only join during your appointment time slot.`);
+                    return false;
+                }
 
                 if (now > apptEndTime) {
                     if (event) event.preventDefault();
@@ -333,7 +357,7 @@ async function loadAppointments() {
         const statusInfo = computeAppointmentStatus(appointment);
         const modeLower = (appointment.mode || "").toLowerCase();
 
-        let sessionActionButton = "";
+        const roomKey = getAppointmentRoomKey(appointment);
         if (statusInfo.badgeClass === "completed") {
             sessionActionButton = `
                 <button class="session-action-btn disabled-action" disabled style="background: #dcfce7; color: #15803d; cursor: not-allowed; opacity: 0.9; border: 1px solid #bbf7d0;">
@@ -347,21 +371,18 @@ async function loadAppointments() {
                 </button>
             `;
         } else if (modeLower.includes("chat") || modeLower.includes("live")) {
-            const roomKey = appointment.roomKey || ("room_" + appointment._id);
             sessionActionButton = `
                 <a href="live-chat.html?room=${roomKey}&therapist=${encodeURIComponent(appointment.therapist)}" onclick="return handleSessionJoin(event, '${appointment.mode || 'Live Chat'}', '${appointment.date}', '${appointment.time}')" class="session-action-btn chat-action">
                     <i class="fa-solid fa-comments"></i> Start Live Chat
                 </a>
             `;
         } else if (modeLower.includes("voice") || modeLower.includes("audio") || modeLower.includes("phone")) {
-            const roomKey = appointment.roomKey || ("room_" + appointment._id);
             sessionActionButton = `
                 <a href="video-call.html?mode=audio&room=${roomKey}&therapist=${encodeURIComponent(appointment.therapist)}" onclick="return handleSessionJoin(event, '${appointment.mode || 'Voice Call'}', '${appointment.date}', '${appointment.time}')" class="session-action-btn voice-action">
                     <i class="fa-solid fa-phone"></i> Start Voice Call
                 </a>
             `;
         } else {
-            const roomKey = appointment.roomKey || ("room_" + appointment._id);
             sessionActionButton = `
                 <a href="video-call.html?room=${roomKey}&therapist=${encodeURIComponent(appointment.therapist)}" onclick="return handleSessionJoin(event, '${appointment.mode || 'Video Call'}', '${appointment.date}', '${appointment.time}')" class="session-action-btn video-action">
                     <i class="fa-solid fa-video"></i> Join Video Call

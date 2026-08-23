@@ -20,6 +20,7 @@ let micState = true;
 let cameraState = true;
 let socket = null;
 let isCallEnded = false;
+let pendingCandidates = [];
 
 // MediaRecorder Dual-Video Canvas State
 let mediaRecorder = null;
@@ -31,7 +32,10 @@ let recordingInterval = null;
 const rtcConfig = {
     iceServers: [
         { urls: "stun:stun.l.google.com:19302" },
-        { urls: "stun:stun1.l.google.com:19302" }
+        { urls: "stun:stun1.l.google.com:19302" },
+        { urls: "stun:stun2.l.google.com:19302" },
+        { urls: "stun:stun3.l.google.com:19302" },
+        { urls: "stun:stun4.l.google.com:19302" }
     ]
 };
 
@@ -178,9 +182,18 @@ function checkAndValidateAccess() {
                 const apptEndTime = new Date(apptStartTime.getTime() + 30 * 60 * 1000);
                 const now = new Date();
 
+                if (now < apptStartTime) {
+                    isNotStarted = true;
+                }
                 if (now > apptEndTime && !appt.attended) {
                     isPast = true;
                 }
+            }
+
+            if (isNotStarted) {
+                alert(`⏰ Call is not available yet. Scheduled for ${appt.date} at ${appt.time}. You can join during your appointment time slot.`);
+                window.location.href = redirectTarget;
+                return false;
             }
 
             if (isPast) {
@@ -284,6 +297,17 @@ function stopCanvasRecording() {
     });
 }
 
+async function processPendingCandidates() {
+    if (peerConnection && peerConnection.remoteDescription && pendingCandidates.length > 0) {
+        for (const candidate of pendingCandidates) {
+            try {
+                await peerConnection.addIceCandidate(candidate);
+            } catch (e) {}
+        }
+        pendingCandidates = [];
+    }
+}
+
 // WebRTC Peer Connection Setup & Socket.io Signaling
 function createPeerConnection() {
     if (peerConnection) return peerConnection;
@@ -296,7 +320,7 @@ function createPeerConnection() {
     peerConnection.ontrack = (event) => {
         const remoteVideo = document.getElementById("remoteVideo");
         const doctorAvatar = document.getElementById("doctorAvatar");
-        if (remoteVideo) {
+        if (remoteVideo && event.streams[0]) {
             remoteVideo.srcObject = event.streams[0];
             remoteVideo.style.display = "block";
             if (doctorAvatar) doctorAvatar.style.display = "none";
@@ -343,6 +367,7 @@ function initSocketSignaling() {
         const pc = createPeerConnection();
         try {
             await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
+            await processPendingCandidates();
             const answer = await pc.createAnswer();
             await pc.setLocalDescription(answer);
             socket.emit("call-answer", { roomKey: roomKeyParam, answer });
@@ -355,17 +380,23 @@ function initSocketSignaling() {
         const pc = createPeerConnection();
         try {
             await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
+            await processPendingCandidates();
         } catch (e) {
             console.warn("Error handling WebRTC answer:", e);
         }
     });
 
     socket.on("ice-candidate", async (data) => {
-        if (peerConnection && data.candidate) {
-            try {
-                await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
-            } catch (e) {
-                console.warn("Error adding ICE candidate:", e);
+        if (data.candidate) {
+            const candidate = new RTCIceCandidate(data.candidate);
+            if (peerConnection && peerConnection.remoteDescription && peerConnection.remoteDescription.type) {
+                try {
+                    await peerConnection.addIceCandidate(candidate);
+                } catch (e) {
+                    console.warn("Error adding ICE candidate:", e);
+                }
+            } else {
+                pendingCandidates.push(candidate);
             }
         }
     });

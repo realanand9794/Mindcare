@@ -264,7 +264,7 @@ async function loadDoctorPatientAppointments(activeDoctor) {
         `;
     } else {
         activeBookings.forEach(appt => {
-            const roomKey = appt.roomKey || ("room_" + appt._id);
+            const roomKey = getAppointmentRoomKey(appt);
             const modeLower = (appt.mode || "").toLowerCase();
             let joinBtn = "";
 
@@ -374,22 +374,22 @@ function handleTherapistSessionJoin(event, mode, dateStr, timeStr) {
         try {
             const [year, month, day] = dateStr.split("-").map(Number);
             const timeParts = timeStr.trim().split(" ");
-            const [hrsStr, minsStr] = timeParts[0].split(":");
-            let hours = parseInt(hrsStr, 10);
-            const minutes = parseInt(minsStr, 10) || 0;
-            const modifier = timeParts[1] ? timeParts[1].toUpperCase() : "AM";
+            const apptStartTime = parseAppointmentDateTime(dateStr, timeStr);
+            if (apptStartTime) {
+                const apptEndTime = new Date(apptStartTime.getTime() + 30 * 60 * 1000);
+                const now = new Date();
 
-            if (modifier === "PM" && hours < 12) hours += 12;
-            if (modifier === "AM" && hours === 12) hours = 0;
+                if (now < apptStartTime) {
+                    if (event) event.preventDefault();
+                    alert(`⏰ ${mode || 'Session'} is not available yet. Scheduled for ${dateStr} at ${timeStr}. You can only join during the appointment time slot.`);
+                    return false;
+                }
 
-            const apptStartTime = new Date(year, month - 1, day, hours, minutes);
-            const apptEndTime = new Date(apptStartTime.getTime() + 30 * 60 * 1000);
-            const now = new Date();
-
-            if (now > apptEndTime) {
-                if (event) event.preventDefault();
-                alert(`⚠️ Appointment time has expired (Missing). ${mode || 'Session'} is closed.`);
-                return false;
+                if (now > apptEndTime) {
+                    if (event) event.preventDefault();
+                    alert(`⚠️ Appointment time has expired (Missing). ${mode || 'Session'} is closed.`);
+                    return false;
+                }
             }
         } catch (e) {
             console.warn("Time slot validation error:", e);
