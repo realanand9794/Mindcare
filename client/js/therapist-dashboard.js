@@ -56,16 +56,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function getAppointmentFingerprint(appt) {
     if (!appt) return "";
-    if (appt.txnId) return "txn_" + appt.txnId;
-    if (appt.roomKey) return "room_" + appt.roomKey;
     const doc = (appt.therapist || appt.doctorName || appt.therapistName || "").toLowerCase().replace(/^dr\.\s*/i, "").trim();
     const dt = (appt.date || "").trim();
-    const tm = (appt.time || "").trim();
-    const em = (appt.email || appt.userEmail || "").toLowerCase().trim();
+    const rawTime = (appt.time || "").replace(/\s*\([^)]*\)/g, "").trim().toLowerCase();
+    const tm = rawTime.replace(/^0/, "").replace(/\s+/g, "");
     if (doc && dt && tm) {
-        return `fp_${doc}_${dt}_${tm}_${em}`;
+        return `fp_${doc}_${dt}_${tm}`;
     }
-    return appt._id || "";
+    if (appt.txnId) return "txn_" + appt.txnId;
+    if (appt.roomKey) return "room_" + appt.roomKey;
+    return appt._id ? appt._id.toString() : "";
 }
 
 async function loadDoctorPatientAppointments(activeDoctor) {
