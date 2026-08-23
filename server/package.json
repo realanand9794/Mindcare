@@ -1,6 +1,6 @@
 {
   "name": "mindcare-server",
-  "version": "21.0.0",
+  "version": "22.0.0",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

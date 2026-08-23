@@ -152,30 +152,34 @@ async function loadDoctorPatientAppointments(activeDoctor) {
         localStorage.setItem("mindcare_all_global_appointments", JSON.stringify(apiAppts));
     }
 
-    const allAppts = apiAppts.length > 0 ? apiAppts : Object.values(uniqueMap);
+    const allAppts = Object.values(uniqueMap);
 
     // Filter strictly for the logged-in doctor (exclude cancelled appointments)
     const docNameRaw = (activeDoctor.name || "").toLowerCase().trim();
     const docNameClean = docNameRaw.replace(/^dr\.\s*/i, "").trim();
     const docId = (activeDoctor._id || activeDoctor.id || "").toString().trim();
+    const docFirst = docNameClean.split(" ")[0];
 
     const myPatientBookings = allAppts.filter(a => {
+        if (!a) return false;
         const rawStatus = (a.status || "").toLowerCase().trim();
         if (rawStatus === "cancelled") return false;
 
-        const apptTherapistRaw = (a.therapist || "").toLowerCase().trim();
+        const apptTherapistRaw = (a.therapist || a.doctorName || a.therapistName || "").toLowerCase().trim();
         const apptTherapistClean = apptTherapistRaw.replace(/^dr\.\s*/i, "").trim();
         const apptTherapistId = (a.therapistId || "").toString().trim();
+        const apptFirst = apptTherapistClean.split(" ")[0];
 
         const matchName = docNameClean && apptTherapistClean && (
             apptTherapistClean === docNameClean ||
             apptTherapistClean.includes(docNameClean) ||
-            docNameClean.includes(apptTherapistClean)
+            docNameClean.includes(apptTherapistClean) ||
+            (docFirst.length >= 3 && apptFirst.length >= 3 && docFirst === apptFirst)
         );
 
         const matchId = docId && apptTherapistId && (docId === apptTherapistId);
 
-        return matchName || matchId;
+        return matchName || matchId || !docNameClean;
     });
 
 
