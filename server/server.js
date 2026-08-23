@@ -45,9 +45,15 @@ mongoose.connect(process.env.MONGO_URI || "mongodb://127.0.0.1:27017/mindcare")
         console.error("MongoDB Connection Error:", err);
     });
 
+const SYSTEM_BUILD_VERSION = "10.0.0";
+
 // API Health Check Route
 app.get("/api/health", (req, res) => {
-    res.json({ success: true, message: "MindCare Backend API Running" });
+    res.json({ success: true, message: "MindCare Backend API Running", buildVersion: SYSTEM_BUILD_VERSION });
+});
+
+app.get("/api/build-info", (req, res) => {
+    res.json({ success: true, buildVersion: SYSTEM_BUILD_VERSION, timestamp: new Date().toISOString() });
 });
 
 // ================= SOCKET.IO REAL-TIME CHAT =================
