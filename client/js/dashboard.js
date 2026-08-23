@@ -344,7 +344,6 @@ async function loadAppointments() {
                 if (!existing) {
                     uniqueMap[key] = a;
                 } else {
-                    const existingStatus = (existing.status || "").toLowerCase().trim();
                     const newStatus = (a.status || "").toLowerCase().trim();
                     if (newStatus === "cancelled" || a.attended === true || (a._id && !existing._id)) {
                         uniqueMap[key] = a;
@@ -354,7 +353,12 @@ async function loadAppointments() {
         }
     });
 
-    userAppointments = Object.values(uniqueMap);
+    if (apiAppts.length > 0) {
+        localStorage.setItem(localKey, JSON.stringify(apiAppts));
+        userAppointments = apiAppts;
+    } else {
+        userAppointments = Object.values(uniqueMap);
+    }
 
     // Self-heal & sync LocalStorage so legacy local duplicates are purged permanently
     if (userId) {

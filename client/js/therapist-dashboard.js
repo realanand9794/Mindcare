@@ -148,7 +148,11 @@ async function loadDoctorPatientAppointments(activeDoctor) {
         }
     });
 
-    const allAppts = Object.values(uniqueMap);
+    if (apiAppts.length > 0) {
+        localStorage.setItem("mindcare_all_global_appointments", JSON.stringify(apiAppts));
+    }
+
+    const allAppts = apiAppts.length > 0 ? apiAppts : Object.values(uniqueMap);
 
     // Filter strictly for the logged-in doctor (exclude cancelled appointments)
     const docNameRaw = (activeDoctor.name || "").toLowerCase().trim();

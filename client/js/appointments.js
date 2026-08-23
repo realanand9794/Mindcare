@@ -305,14 +305,12 @@ async function loadAppointments() {
         }
     });
 
-    appointments = Object.values(uniqueMap);
-
-    // Self-heal & sync LocalStorage so legacy local duplicates are purged permanently
-    if (userId) {
-        const cleanUserAppts = appointments.filter(isAppointmentBelongsToUser);
-        localStorage.setItem(localKey, JSON.stringify(cleanUserAppts));
+    if (apiAppts.length > 0) {
+        localStorage.setItem(localKey, JSON.stringify(apiAppts));
+        appointments = apiAppts;
+    } else {
+        appointments = Object.values(uniqueMap);
     }
-    localStorage.setItem("mindcare_all_global_appointments", JSON.stringify(appointments));
 
     currentLoadedAppointments = appointments;
 
