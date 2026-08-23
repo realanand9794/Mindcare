@@ -359,13 +359,21 @@ async function loadAppointments() {
     });
 
     // Filter Cancelled AND Missed/Expired appointments
-    const cancelledAndMissedAll = userAppointments.filter(a => {
+    const rawCancelledAndMissedAll = userAppointments.filter(a => {
         const info = computeAppointmentStatus(a);
         const rawStatus = (a.status || "").toLowerCase().trim();
         return info.badgeClass === "cancelled" || info.badgeClass === "missing" || rawStatus === "cancelled" || rawStatus === "missing" || rawStatus === "expired" || rawStatus === "missed";
     });
 
-    const top5CancelledAndMissed = cancelledAndMissedAll.slice(0, 5);
+    const uniqueCancelledMap = {};
+    rawCancelledAndMissedAll.forEach(a => {
+        const key = getAppointmentFingerprint(a);
+        if (key && !uniqueCancelledMap[key]) {
+            uniqueCancelledMap[key] = a;
+        }
+    });
+
+    const top5CancelledAndMissed = Object.values(uniqueCancelledMap).slice(0, 5);
 
     // ---------------- UPCOMING TABLE ----------------
     if (upcomingTable) {

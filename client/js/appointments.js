@@ -426,11 +426,21 @@ async function loadAppointments() {
 
     // Render Cancelled & Missed Appointments List
     const cancelledListElem = document.getElementById("cancelledAppointmentsList");
-    const cancelledAndMissedAppointments = appointments.filter(a => {
+    const rawCancelledAndMissedAppointments = appointments.filter(a => {
         const info = computeAppointmentStatus(a);
         const rawStatus = (a.status || "").toLowerCase().trim();
         return info.badgeClass === "cancelled" || info.badgeClass === "missing" || rawStatus === "cancelled" || rawStatus === "missing" || rawStatus === "expired" || rawStatus === "missed";
     });
+
+    const uniqueCancelledMapAppts = {};
+    rawCancelledAndMissedAppointments.forEach(a => {
+        const key = getAppointmentFingerprint(a);
+        if (key && !uniqueCancelledMapAppts[key]) {
+            uniqueCancelledMapAppts[key] = a;
+        }
+    });
+
+    const cancelledAndMissedAppointments = Object.values(uniqueCancelledMapAppts);
 
     if (cancelledListElem) {
         cancelledListElem.innerHTML = "";
