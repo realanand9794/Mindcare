@@ -102,6 +102,35 @@ if (therapistName) {
 }
 
 
+function isTimeSlotInPast(dateStr, timeStr) {
+    if (!dateStr || !timeStr) return false;
+    try {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        const todayStr = `${year}-${month}-${day}`;
+
+        if (dateStr < todayStr) return true;
+        if (dateStr > todayStr) return false;
+
+        const cleanTime = timeStr.replace(/\s*\([^)]*\)/g, "").trim().toUpperCase();
+        const timeParts = cleanTime.replace(/[^\d:]/g, "").split(":");
+        let hours = parseInt(timeParts[0], 10) || 0;
+        const minutes = parseInt(timeParts[1], 10) || 0;
+        const isPM = cleanTime.includes("PM");
+        const isAM = cleanTime.includes("AM");
+
+        if (isPM && hours < 12) hours += 12;
+        if (isAM && hours === 12) hours = 0;
+
+        const slotDate = new Date(today.getFullYear(), today.getMonth(), today.getDate(), hours, minutes);
+        return today > slotDate;
+    } catch (e) {
+        return false;
+    }
+}
+
 async function updateAvailableTimeSlots() {
     const timeSelect = document.getElementById("time");
     const dateInput = document.getElementById("date");
@@ -164,31 +193,40 @@ async function updateAvailableTimeSlots() {
 
     // 2. Iterate through time select options
     let firstAvailableValue = null;
-    let isCurrentSelectedBooked = false;
+    let isCurrentSelectedUnavailable = false;
 
     for (let opt of timeSelect.options) {
         const rawTimeStr = (opt.value || opt.text).replace(/\s*\([^)]*\)/g, "").trim();
         const normalizedKey = rawTimeStr.toUpperCase();
+        const isBooked = bookedTimeSlots.has(normalizedKey);
+        const isPast = isTimeSlotInPast(selectedDate, rawTimeStr);
 
-        if (bookedTimeSlots.has(normalizedKey)) {
+        if (isBooked) {
             opt.disabled = true;
             opt.textContent = `${rawTimeStr} (Booked 🚫)`;
             opt.style.color = "#dc2626";
             if (timeSelect.value === rawTimeStr || timeSelect.value === opt.value) {
-                isCurrentSelectedBooked = true;
+                isCurrentSelectedUnavailable = true;
+            }
+        } else if (isPast) {
+            opt.disabled = true;
+            opt.textContent = `${rawTimeStr} (Passed ⏰)`;
+            opt.style.color = "#94a3b8";
+            if (timeSelect.value === rawTimeStr || timeSelect.value === opt.value) {
+                isCurrentSelectedUnavailable = true;
             }
         } else {
             opt.disabled = false;
             opt.textContent = rawTimeStr;
             opt.style.color = "";
             if (!firstAvailableValue) {
-                firstAvailableValue = rawTimeStr;
+                firstAvailableValue = opt.value || rawTimeStr;
             }
         }
     }
 
-    // If currently selected option is booked, switch to first available unbooked option
-    if (isCurrentSelectedBooked && firstAvailableValue) {
+    // If currently selected option is booked or past, switch to first available unbooked upcoming option
+    if (isCurrentSelectedUnavailable && firstAvailableValue) {
         timeSelect.value = firstAvailableValue;
     }
 }
@@ -240,6 +278,13 @@ form.addEventListener("submit", async (e) => {
     if (!therapistId) {
         alert("Therapist ID missing. Please select therapist again.");
         window.location.href = "therapists.html";
+        return;
+    }
+
+    // Guard against past time slots for today
+    if (isTimeSlotInPast(date, time)) {
+        alert(`⏰ PAST TIME SLOT!\n\n${time} on ${date} has already passed.\n\nPlease select an upcoming time slot.`);
+        updateAvailableTimeSlots();
         return;
     }
 
