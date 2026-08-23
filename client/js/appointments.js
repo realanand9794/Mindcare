@@ -528,6 +528,12 @@ async function cancelAppointment(id) {
 
     if (appt) {
         appt.status = "Cancelled";
+        if (appt.roomKey) {
+            localStorage.removeItem(`mindcare_chat_room_${appt.roomKey}`);
+        }
+        if (appt._id) {
+            localStorage.removeItem(`mindcare_chat_room_${appt._id}`);
+        }
     }
 
     // Try Relative Backend API first, then Live Fallback

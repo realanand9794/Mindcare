@@ -92,6 +92,10 @@ async function loadTherapistsInbox() {
 
     const userBookedAppts = [...rawLocalAppts, ...globalAppts].filter(a => {
         if (!a) return false;
+
+        const rawStatus = (a.status || "").toLowerCase().trim();
+        if (rawStatus === "cancelled") return false;
+
         const apptUserId = (a.userId || a.user || "").toString();
         const apptEmail = (a.email || "").toLowerCase().trim();
         const cleanUserId = userId ? userId.toString() : "";
@@ -114,7 +118,11 @@ async function loadTherapistsInbox() {
         });
         const data = await res.json();
         if (data.success && Array.isArray(data.appointments)) {
-            allUserAppointments = [...data.appointments, ...userBookedAppts];
+            const activeApiAppts = data.appointments.filter(a => {
+                const rawStatus = (a.status || "").toLowerCase().trim();
+                return rawStatus !== "cancelled";
+            });
+            allUserAppointments = [...activeApiAppts, ...userBookedAppts];
         }
     } catch (err) {
         console.warn("Could not load booked appointments from API, using user local storage:", err);
@@ -122,6 +130,9 @@ async function loadTherapistsInbox() {
 
     const bookedMap = {};
     allUserAppointments.forEach(app => {
+        const rawStatus = (app.status || "").toLowerCase().trim();
+        if (rawStatus === "cancelled") return;
+
         const nameKey = (app.therapist || "").toLowerCase().trim();
         if (!nameKey) return;
 

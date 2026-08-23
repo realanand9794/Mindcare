@@ -831,6 +831,12 @@ async function cancelAppointment(id) {
     const appt = userAppointments.find(a => a._id === id);
     if (appt) {
         appt.status = "Cancelled";
+        if (appt.roomKey) {
+            localStorage.removeItem(`mindcare_chat_room_${appt.roomKey}`);
+        }
+        if (appt._id) {
+            localStorage.removeItem(`mindcare_chat_room_${appt._id}`);
+        }
     }
 
     // Attempt API Call
