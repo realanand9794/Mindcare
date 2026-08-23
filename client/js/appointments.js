@@ -284,6 +284,13 @@ async function loadAppointments() {
 
     appointments = Object.values(uniqueMap);
 
+    // Self-heal & sync LocalStorage so legacy local duplicates are purged permanently
+    if (userId) {
+        const cleanUserAppts = appointments.filter(isAppointmentBelongsToUser);
+        localStorage.setItem(localKey, JSON.stringify(cleanUserAppts));
+    }
+    localStorage.setItem("mindcare_all_global_appointments", JSON.stringify(appointments));
+
     currentLoadedAppointments = appointments;
 
     // Filter ONLY active future upcoming appointments (exclude cancelled, completed, and missing)

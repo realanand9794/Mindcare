@@ -333,6 +333,13 @@ async function loadAppointments() {
 
     userAppointments = Object.values(uniqueMap);
 
+    // Self-heal & sync LocalStorage so legacy local duplicates are purged permanently
+    if (userId) {
+        const cleanUserAppts = userAppointments.filter(isAppointmentBelongsToUser);
+        localStorage.setItem(localKey, JSON.stringify(cleanUserAppts));
+    }
+    localStorage.setItem("mindcare_all_global_appointments", JSON.stringify(userAppointments));
+
     const upcomingTable = document.getElementById("upcomingAppointmentTable");
     const cancelledTable = document.getElementById("cancelledAppointmentTable");
 
