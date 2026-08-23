@@ -218,34 +218,7 @@ async function loadDoctorPatientAppointments(activeDoctor) {
     function isApptCompleted(appt) {
         if (!appt) return false;
         const rawStatus = (appt.status || "").toLowerCase().trim();
-        const isFlaggedCompleted = appt.attended === true || rawStatus === "completed" || rawStatus === "therapy session completed";
-        if (!isFlaggedCompleted) return false;
-
-        // Future appointment guard: Future sessions cannot be completed yet
-        const apptStartTime = parseAppointmentDateTime(appt.date, appt.time);
-        if (apptStartTime && new Date() < apptStartTime) {
-            appt.attended = false;
-            if (rawStatus === "completed" || rawStatus === "therapy session completed") {
-                appt.status = "Confirmed";
-            }
-            // Self-heal storage
-            try {
-                let allGlobal = JSON.parse(localStorage.getItem("mindcare_all_global_appointments") || "[]");
-                allGlobal = allGlobal.map(g => (g._id === appt._id || (g.roomKey && g.roomKey === appt.roomKey)) ? { ...g, attended: false, status: "Confirmed" } : g);
-                localStorage.setItem("mindcare_all_global_appointments", JSON.stringify(allGlobal));
-
-                Object.keys(localStorage).forEach(k => {
-                    if (k.startsWith("mindcare_user_appointments_")) {
-                        let list = JSON.parse(localStorage.getItem(k) || "[]");
-                        list = list.map(u => (u._id === appt._id || (u.roomKey && u.roomKey === appt.roomKey)) ? { ...u, attended: false, status: "Confirmed" } : u);
-                        localStorage.setItem(k, JSON.stringify(list));
-                    }
-                });
-            } catch (e) {}
-
-            return false;
-        }
-        return true;
+        return appt.attended === true || rawStatus === "completed" || rawStatus === "therapy session completed";
     }
 
     function isApptMissingOrExpired(appt) {

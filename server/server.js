@@ -45,7 +45,7 @@ mongoose.connect(process.env.MONGO_URI || "mongodb://127.0.0.1:27017/mindcare")
         console.error("MongoDB Connection Error:", err);
     });
 
-const SYSTEM_BUILD_VERSION = "12.0.0";
+const SYSTEM_BUILD_VERSION = "13.0.0";
 
 // API Health Check Route
 app.get("/api/health", (req, res) => {
