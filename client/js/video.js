@@ -178,18 +178,9 @@ function checkAndValidateAccess() {
                 const apptEndTime = new Date(apptStartTime.getTime() + 30 * 60 * 1000);
                 const now = new Date();
 
-                if (now < apptStartTime) {
-                    isNotStarted = true;
-                }
                 if (now > apptEndTime && !appt.attended) {
                     isPast = true;
                 }
-            }
-
-            if (isNotStarted) {
-                alert(`⏰ Call is not available yet. Scheduled for ${appt.date} at ${appt.time}. You can join during the appointment time slot.`);
-                window.location.href = redirectTarget;
-                return false;
             }
 
             if (isPast) {

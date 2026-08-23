@@ -126,12 +126,6 @@ function handleSessionJoin(event, mode, dateStr, timeStr) {
                 const apptEndTime = new Date(apptStartTime.getTime() + 30 * 60 * 1000);
                 const now = new Date();
 
-                if (now < apptStartTime) {
-                    if (event) event.preventDefault();
-                    alert(`⏰ ${mode || 'Session'} is not available yet. Scheduled for ${dateStr} at ${timeStr}. You can only join during your appointment time slot.`);
-                    return false;
-                }
-
                 if (now > apptEndTime) {
                     if (event) event.preventDefault();
                     alert(`⚠️ Appointment time has expired (Missed). ${mode || 'Session'} is closed.`);
