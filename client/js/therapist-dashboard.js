@@ -254,8 +254,9 @@ async function loadDoctorPatientAppointments(activeDoctor) {
     }
 
     const activeBookings = myPatientBookings.filter(a => {
+        if (!a) return false;
         const st = (a.status || "").toLowerCase().trim();
-        return st !== "cancelled" && !isApptCompleted(a) && !isApptMissingOrExpired(a);
+        return st !== "cancelled" && !isApptCompleted(a);
     });
     const allCompletedBookings = myPatientBookings.filter(a => isApptCompleted(a));
     const top5CompletedBookings = allCompletedBookings.slice().reverse().slice(0, 5);
