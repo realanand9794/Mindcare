@@ -35,7 +35,8 @@ const rtcConfig = {
         { urls: "stun:stun1.l.google.com:19302" },
         { urls: "stun:stun2.l.google.com:19302" },
         { urls: "stun:stun3.l.google.com:19302" },
-        { urls: "stun:stun4.l.google.com:19302" }
+        { urls: "stun:stun4.l.google.com:19302" },
+        { urls: "stun:global.stun.twilio.com:3478" }
     ]
 };
 
@@ -310,7 +311,19 @@ async function processPendingCandidates() {
 
 // WebRTC Peer Connection Setup & Socket.io Signaling
 function createPeerConnection() {
-    if (peerConnection) return peerConnection;
+    if (peerConnection) {
+        if (localStream) {
+            localStream.getTracks().forEach(track => {
+                const senders = peerConnection.getSenders();
+                const exists = senders.some(s => s.track === track);
+                if (!exists) {
+                    peerConnection.addTrack(track, localStream);
+                }
+            });
+        }
+        return peerConnection;
+    }
+
     peerConnection = new RTCPeerConnection(rtcConfig);
 
     if (localStream) {
@@ -318,14 +331,17 @@ function createPeerConnection() {
     }
 
     peerConnection.ontrack = (event) => {
+        console.log("🎥 WebRTC Remote track received:", event.track.kind);
         const remoteVideo = document.getElementById("remoteVideo");
         const doctorAvatar = document.getElementById("doctorAvatar");
-        if (remoteVideo && event.streams[0]) {
-            remoteVideo.srcObject = event.streams[0];
+        if (remoteVideo) {
+            const stream = (event.streams && event.streams[0]) ? event.streams[0] : new MediaStream([event.track]);
+            remoteVideo.srcObject = stream;
             remoteVideo.style.display = "block";
+            remoteVideo.play().catch(e => console.warn("Remote video auto-play notice:", e));
             if (doctorAvatar) doctorAvatar.style.display = "none";
+            startCanvasRecording(stream);
         }
-        startCanvasRecording(event.streams[0]);
     };
 
     peerConnection.onicecandidate = (event) => {
@@ -340,7 +356,10 @@ function createPeerConnection() {
 function initSocketSignaling() {
     if (typeof io !== "undefined") {
         try {
-            socket = io();
+            const socketHost = (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+                ? undefined
+                : "https://mindcare-1-r9a5.onrender.com";
+            socket = io(socketHost || "https://mindcare-1-r9a5.onrender.com");
         } catch (e) {
             try {
                 socket = io("https://mindcare-1-r9a5.onrender.com");
@@ -353,9 +372,13 @@ function initSocketSignaling() {
     socket.emit("join-call-room", { roomKey: roomKeyParam, role: roleParam });
 
     socket.on("user-connected-to-call", async () => {
+        console.log("⚡ Peer connected to call room. Generating WebRTC offer...");
         const pc = createPeerConnection();
         try {
-            const offer = await pc.createOffer();
+            const offer = await pc.createOffer({
+                offerToReceiveAudio: true,
+                offerToReceiveVideo: true
+            });
             await pc.setLocalDescription(offer);
             socket.emit("call-offer", { roomKey: roomKeyParam, offer });
         } catch (e) {
@@ -364,6 +387,7 @@ function initSocketSignaling() {
     });
 
     socket.on("call-offer", async (data) => {
+        console.log("⚡ WebRTC Call Offer received from peer.");
         const pc = createPeerConnection();
         try {
             await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
@@ -377,6 +401,7 @@ function initSocketSignaling() {
     });
 
     socket.on("call-answer", async (data) => {
+        console.log("⚡ WebRTC Call Answer received from peer.");
         const pc = createPeerConnection();
         try {
             await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
