@@ -293,17 +293,11 @@ async function loadDoctorPatientAppointments(activeDoctor) {
         }
     }
 
-    function isApptCompleted(appt) {
-        if (!appt) return false;
-        const rawStatus = (appt.status || "").toLowerCase().trim();
-        return appt.attended === true || rawStatus === "completed" || rawStatus === "therapy session completed";
-    }
-
     function isApptMissingOrExpired(appt) {
         if (!appt) return false;
         const rawStatus = (appt.status || "").toLowerCase().trim();
         if (rawStatus === "cancelled") return false;
-        if (isApptCompleted(appt)) return false;
+        if (rawStatus === "completed" || rawStatus === "therapy session completed") return false;
 
         const apptStartTime = parseAppointmentDateTime(appt.date, appt.time);
         if (apptStartTime) {
@@ -311,6 +305,21 @@ async function loadDoctorPatientAppointments(activeDoctor) {
             return new Date() > apptEndTime;
         }
         return false;
+    }
+
+    function isApptCompleted(appt) {
+        if (!appt) return false;
+        const rawStatus = (appt.status || "").toLowerCase().trim();
+
+        if (rawStatus === "missed" || rawStatus === "session missed" || rawStatus === "expired" || rawStatus === "cancelled") {
+            return false;
+        }
+
+        if (isApptMissingOrExpired(appt) && rawStatus !== "therapy session completed" && rawStatus !== "completed") {
+            return false;
+        }
+
+        return appt.attended === true || rawStatus === "completed" || rawStatus === "therapy session completed";
     }
 
     const activeBookings = myPatientBookings.filter(a => {
