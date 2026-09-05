@@ -158,6 +158,11 @@ exports.completeAppointment = async (req, res) => {
                 { $or: [{ roomKey: id }, { txnId: id }] },
                 { $set: { attended: true, status: "Therapy Session Completed" } }
             );
+            if (req.io) {
+                req.io.emit("appointment-booked", { roomKey: id, status: "Therapy Session Completed" });
+                req.io.emit("appointment-completed", { roomKey: id, status: "Therapy Session Completed" });
+                req.io.emit("appointment-updated", { roomKey: id, status: "Therapy Session Completed" });
+            }
             return res.status(200).json({
                 success: true,
                 message: "Therapy session marked as completed"
@@ -167,6 +172,12 @@ exports.completeAppointment = async (req, res) => {
         appointment.attended = true;
         appointment.status = "Therapy Session Completed";
         await appointment.save();
+
+        if (req.io) {
+            req.io.emit("appointment-booked", appointment);
+            req.io.emit("appointment-completed", appointment);
+            req.io.emit("appointment-updated", appointment);
+        }
 
         res.status(200).json({
             success: true,

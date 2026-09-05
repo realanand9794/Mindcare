@@ -75,8 +75,14 @@
     </footer>
 
 
-    <script src="js/theme.js?v=21.0"></script>
-    <script src="js/appointments.js?v=21.0"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        if (typeof io === "undefined") {
+            document.write('<script src="https://mindcare-1-r9a5.onrender.com/socket.io/socket.io.js"><\/script>');
+        }
+    </script>
+    <script src="js/theme.js?v=30.0"></script>
+    <script src="js/appointments.js?v=30.0"></script>
 
 </body>
 

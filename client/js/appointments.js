@@ -538,3 +538,25 @@ if (document.readyState === "loading") {
 } else {
     loadAppointments();
 }
+
+if (typeof io !== "undefined") {
+    try {
+        const socketHost = (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+            ? undefined
+            : "https://mindcare-1-r9a5.onrender.com";
+        const socket = io(socketHost);
+        socket.on("appointment-completed", () => {
+            try { loadAppointments(); } catch (e) {}
+        });
+        socket.on("appointment-updated", () => {
+            try { loadAppointments(); } catch (e) {}
+        });
+        socket.on("appointment-booked", () => {
+            try { loadAppointments(); } catch (e) {}
+        });
+    } catch (e) {}
+}
+
+setInterval(() => {
+    try { loadAppointments(); } catch (e) {}
+}, 6000);

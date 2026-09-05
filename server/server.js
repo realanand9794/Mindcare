@@ -51,7 +51,7 @@ mongoose.connect(process.env.MONGO_URI || "mongodb://127.0.0.1:27017/mindcare")
         console.error("MongoDB Connection Error:", err);
     });
 
-const SYSTEM_BUILD_VERSION = "28.0.0";
+const SYSTEM_BUILD_VERSION = "30.0.0";
 
 // API Health Check Route
 app.get("/api/health", (req, res) => {
@@ -105,15 +105,27 @@ io.on("connection", (socket) => {
         }
     });
 
-    socket.on("end-call-room", (data) => {
+    socket.on("end-call-room", async (data) => {
         const { roomKey, role } = data || {};
         if (roomKey) {
             socket.to(roomKey).emit("call-ended-by-peer", { role });
             socket.to(roomKey).emit("peer-left", { role });
+            try {
+                const Appointment = require("./models/Appointment");
+                await Appointment.updateMany(
+                    { $or: [{ roomKey: roomKey }, { txnId: roomKey }] },
+                    { $set: { attended: true, status: "Therapy Session Completed" } }
+                );
+                io.emit("appointment-booked", { roomKey: roomKey, status: "Therapy Session Completed" });
+                io.emit("appointment-completed", { roomKey: roomKey, status: "Therapy Session Completed" });
+                io.emit("appointment-updated", { roomKey: roomKey, status: "Therapy Session Completed" });
+            } catch (e) {
+                console.warn("Auto-complete DB sync on call end error:", e);
+            }
         }
     });
 
-    socket.on("peer-left", (data) => {
+    socket.on("peer-left", async (data) => {
         const { roomKey, role } = data || {};
         if (roomKey) {
             socket.to(roomKey).emit("peer-left", { role });

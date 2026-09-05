@@ -890,7 +890,26 @@ async function cancelAppointment(id) {
     initDashboard();
 }
 
-// Auto Refresh Statuses Every 60 Seconds
+// Real-time Socket.io listener & periodic auto-refresh polling for customer portal sync
+if (typeof io !== "undefined") {
+    try {
+        const socketHost = (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+            ? undefined
+            : "https://mindcare-1-r9a5.onrender.com";
+        const socket = io(socketHost);
+        socket.on("appointment-completed", () => {
+            try { initDashboard(); } catch (e) {}
+        });
+        socket.on("appointment-updated", () => {
+            try { initDashboard(); } catch (e) {}
+        });
+        socket.on("appointment-booked", () => {
+            try { initDashboard(); } catch (e) {}
+        });
+    } catch (e) {}
+}
+
+// Auto Refresh Statuses Every 6 Seconds
 setInterval(() => {
     try { initDashboard(); } catch (e) {}
-}, 60000);
+}, 6000);
