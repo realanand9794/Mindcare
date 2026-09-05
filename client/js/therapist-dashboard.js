@@ -94,12 +94,16 @@ function getAppointmentRoomKey(appt) {
 function getAppointmentFingerprint(appt) {
     if (!appt) return "";
 
-    if (appt._id && typeof appt._id === "string" && !appt._id.startsWith("appt_")) {
-        return "id_" + appt._id;
+    // 1. Unique roomKey / txnId check FIRST (shared between client local draft & DB record)
+    if (appt.roomKey && appt.roomKey.toString().trim() !== "") {
+        return "room_" + appt.roomKey.toString().trim();
     }
-    if (appt.roomKey) return "room_" + appt.roomKey;
-    if (appt.txnId) return "txn_" + appt.txnId;
-    if (appt._id) return "id_" + appt._id;
+    if (appt.txnId && appt.txnId.toString().trim() !== "") {
+        return "txn_" + appt.txnId.toString().trim();
+    }
+    if (appt._id && appt._id.toString().trim() !== "") {
+        return "id_" + appt._id.toString().trim();
+    }
 
     let rawDoc = appt.therapist || appt.doctorName || appt.therapistName || appt.name || "";
     let doc = rawDoc.toLowerCase().replace(/^dr\.\s*/i, "").replace(/[^a-z0-9]/g, "");
@@ -147,18 +151,20 @@ async function loadDoctorPatientAppointments(activeDoctor) {
     try {
         const resLocal = await fetch("/api/appointment/all");
         const dataLocal = await resLocal.json();
-        if (dataLocal.success && Array.isArray(dataLocal.appointments)) {
+        if (dataLocal.success && Array.isArray(dataLocal.appointments) && dataLocal.appointments.length > 0) {
             apiAppts.push(...dataLocal.appointments);
         }
     } catch (e) {}
 
-    try {
-        const resLive = await fetch("https://mindcare-1-r9a5.onrender.com/api/appointment/all");
-        const dataLive = await resLive.json();
-        if (dataLive.success && Array.isArray(dataLive.appointments)) {
-            apiAppts.push(...dataLive.appointments);
-        }
-    } catch (e) {}
+    if (apiAppts.length === 0) {
+        try {
+            const resLive = await fetch("https://mindcare-1-r9a5.onrender.com/api/appointment/all");
+            const dataLive = await resLive.json();
+            if (dataLive.success && Array.isArray(dataLive.appointments)) {
+                apiAppts.push(...dataLive.appointments);
+            }
+        } catch (e) {}
+    }
 
     // Fetch all global appointments & user appointment stores from localStorage
     const allGlobal = JSON.parse(localStorage.getItem("mindcare_all_global_appointments") || "[]");
