@@ -349,7 +349,6 @@ async function loadDoctorPatientAppointments(activeDoctor) {
     } else {
         activeBookings.forEach(appt => {
             const roomKey = getAppointmentRoomKey(appt);
-            const apptId = appt._id || appt.roomKey || appt.txnId || "";
             const modeLower = (appt.mode || "").toLowerCase();
             let joinBtn = "";
 
@@ -373,12 +372,6 @@ async function loadDoctorPatientAppointments(activeDoctor) {
                 `;
             }
 
-            const completeBtn = `
-                <button onclick="markTherapistSessionCompleted('${apptId}')" class="join-action-btn complete" style="background: #064e3b; color: #34d399; border: 1px solid #059669; cursor: pointer; padding: 6px 12px; border-radius: 8px; font-weight: 600; font-size: 12px;" title="Mark Session as Completed">
-                    <i class="fa-solid fa-circle-check"></i> Complete
-                </button>
-            `;
-
             const tr = document.createElement("tr");
             tr.innerHTML = `
                 <td>
@@ -396,7 +389,6 @@ async function loadDoctorPatientAppointments(activeDoctor) {
                 <td style="text-align: right;">
                     <div style="display: flex; gap: 8px; justify-content: flex-end; align-items: center;">
                         ${joinBtn}
-                        ${completeBtn}
                     </div>
                 </td>
             `;
