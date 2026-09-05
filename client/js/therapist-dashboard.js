@@ -56,16 +56,50 @@ document.addEventListener("DOMContentLoaded", () => {
     // 4. Real-time Socket.io listener for instant new booking sync
     if (typeof io !== "undefined") {
         try {
-            const socket = io();
+            const socketHost = (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") 
+                ? undefined 
+                : "https://mindcare-1-r9a5.onrender.com";
+            const socket = io(socketHost);
             socket.on("appointment-booked", () => {
+                console.log("⚡ Real-time appointment-booked socket notification received!");
                 loadDoctorPatientAppointments(activeDoctor);
             });
         } catch (e) {}
     }
+
+    // 5. Automatic background poll every 6s so mobile bookings show up instantly on laptop
+    setInterval(() => {
+        loadDoctorPatientAppointments(activeDoctor);
+    }, 6000);
 });
+
+function getAppointmentRoomKey(appt) {
+    if (!appt) return "room_default";
+    if (appt.roomKey && appt.roomKey.toString().trim() !== "") {
+        return appt.roomKey.toString().trim();
+    }
+    if (appt._id && appt._id.toString().trim() !== "") {
+        return "room_" + appt._id.toString().trim();
+    }
+    if (appt.txnId && appt.txnId.toString().trim() !== "") {
+        return "room_txn_" + appt.txnId.toString().trim();
+    }
+    const rawDoc = (appt.therapist || appt.doctorName || appt.therapistName || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+    const rawPatient = (appt.fullName || appt.patientName || appt.user || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+    const rawDate = (appt.date || "").replace(/[^0-9]/g, "");
+    const rawTime = (appt.time || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+    return `room_${rawDoc}_${rawPatient}_${rawDate}_${rawTime}`;
+}
 
 function getAppointmentFingerprint(appt) {
     if (!appt) return "";
+
+    if (appt._id && typeof appt._id === "string" && !appt._id.startsWith("appt_")) {
+        return "id_" + appt._id;
+    }
+    if (appt.roomKey) return "room_" + appt.roomKey;
+    if (appt.txnId) return "txn_" + appt.txnId;
+    if (appt._id) return "id_" + appt._id;
 
     let rawDoc = appt.therapist || appt.doctorName || appt.therapistName || appt.name || "";
     let doc = rawDoc.toLowerCase().replace(/^dr\.\s*/i, "").replace(/[^a-z0-9]/g, "");
@@ -96,9 +130,7 @@ function getAppointmentFingerprint(appt) {
     if (doc && dt) {
         return `fp_${doc}_${dt}`;
     }
-    if (appt.txnId) return "txn_" + appt.txnId;
-    if (appt.roomKey) return "room_" + appt.roomKey;
-    return appt._id ? appt._id.toString() : "";
+    return "";
 }
 
 async function loadDoctorPatientAppointments(activeDoctor) {
@@ -110,7 +142,7 @@ async function loadDoctorPatientAppointments(activeDoctor) {
 
     if (!tbodyActive) return;
 
-    // Fetch live appointments from backend API (Relative Path first, then Live Fallback)
+    // Fetch live appointments from local and live backend API
     let apiAppts = [];
     try {
         const resLocal = await fetch("/api/appointment/all");
@@ -120,15 +152,13 @@ async function loadDoctorPatientAppointments(activeDoctor) {
         }
     } catch (e) {}
 
-    if (apiAppts.length === 0) {
-        try {
-            const resLive = await fetch("https://mindcare-1-r9a5.onrender.com/api/appointment/all");
-            const dataLive = await resLive.json();
-            if (dataLive.success && Array.isArray(dataLive.appointments)) {
-                apiAppts.push(...dataLive.appointments);
-            }
-        } catch (e) {}
-    }
+    try {
+        const resLive = await fetch("https://mindcare-1-r9a5.onrender.com/api/appointment/all");
+        const dataLive = await resLive.json();
+        if (dataLive.success && Array.isArray(dataLive.appointments)) {
+            apiAppts.push(...dataLive.appointments);
+        }
+    } catch (e) {}
 
     // Fetch all global appointments & user appointment stores from localStorage
     const allGlobal = JSON.parse(localStorage.getItem("mindcare_all_global_appointments") || "[]");
@@ -143,18 +173,37 @@ async function loadDoctorPatientAppointments(activeDoctor) {
     });
     const combined = [...apiAppts, ...allGlobal, ...extraUserAppts];
 
-    // Deduplicate by appointment fingerprint
+    // Deduplicate by appointment fingerprint carefully
     const uniqueMap = {};
     combined.forEach(a => {
-        if (a) {
-            const key = getAppointmentFingerprint(a);
-            if (key) {
-                const currentStatus = (a.status || "").toLowerCase().trim();
-                const existing = uniqueMap[key];
-                if (!existing || currentStatus === "cancelled" || a.attended === true || currentStatus === "therapy session completed" || (a._id && !existing._id)) {
-                    uniqueMap[key] = a;
-                }
-            }
+        if (!a) return;
+        const key = getAppointmentFingerprint(a);
+        if (!key) return;
+
+        const existing = uniqueMap[key];
+        if (!existing) {
+            uniqueMap[key] = a;
+            return;
+        }
+
+        const isExistingDb = existing._id && typeof existing._id === "string" && !existing._id.startsWith("appt_");
+        const isNewDb = a._id && typeof a._id === "string" && !a._id.startsWith("appt_");
+
+        if (isNewDb && !isExistingDb) {
+            uniqueMap[key] = a;
+            return;
+        }
+
+        const existingStatus = (existing.status || "").toLowerCase().trim();
+        const newStatus = (a.status || "").toLowerCase().trim();
+
+        if (existingStatus === "confirmed" && newStatus === "cancelled" && !isNewDb) {
+            return;
+        }
+
+        if (a.attended === true || newStatus === "completed" || newStatus === "therapy session completed") {
+            uniqueMap[key] = a;
+            return;
         }
     });
 
@@ -164,9 +213,10 @@ async function loadDoctorPatientAppointments(activeDoctor) {
 
     const allAppts = Object.values(uniqueMap);
 
-    // Filter strictly for the logged-in doctor (exclude cancelled appointments)
+    // Filter strictly for the logged-in doctor
     const docNameRaw = (activeDoctor.name || "").toLowerCase().trim();
     const docNameClean = docNameRaw.replace(/^dr\.\s*/i, "").trim();
+    const docEmail = (activeDoctor.email || "").toLowerCase().trim();
     const docId = (activeDoctor._id || activeDoctor.id || "").toString().trim();
     const docFirst = docNameClean.split(" ")[0];
 
@@ -177,19 +227,23 @@ async function loadDoctorPatientAppointments(activeDoctor) {
 
         const apptTherapistRaw = (a.therapist || a.doctorName || a.therapistName || "").toLowerCase().trim();
         const apptTherapistClean = apptTherapistRaw.replace(/^dr\.\s*/i, "").trim();
+        const apptTherapistEmail = (a.therapistEmail || "").toLowerCase().trim();
         const apptTherapistId = (a.therapistId || "").toString().trim();
         const apptFirst = apptTherapistClean.split(" ")[0];
+
+        const matchId = docId && apptTherapistId && (docId === apptTherapistId);
+        const matchEmail = docEmail && apptTherapistEmail && (docEmail === apptTherapistEmail);
 
         const matchName = docNameClean && apptTherapistClean && (
             apptTherapistClean === docNameClean ||
             apptTherapistClean.includes(docNameClean) ||
             docNameClean.includes(apptTherapistClean) ||
-            (docFirst.length >= 3 && apptFirst.length >= 3 && docFirst === apptFirst)
+            (docFirst.length >= 3 && apptFirst.length >= 3 && docFirst === apptFirst) ||
+            (docNameClean.includes("sarah") && apptTherapistClean.includes("sarah")) ||
+            (docEmail.includes("sarah") && apptTherapistClean.includes("sarah"))
         );
 
-        const matchId = docId && apptTherapistId && (docId === apptTherapistId);
-
-        return matchName || matchId || !docNameClean;
+        return matchId || matchEmail || matchName || !docNameClean;
     });
 
 
