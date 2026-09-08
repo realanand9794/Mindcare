@@ -338,6 +338,7 @@ function createPeerConnection() {
             const stream = (event.streams && event.streams[0]) ? event.streams[0] : new MediaStream([event.track]);
             remoteVideo.srcObject = stream;
             remoteVideo.style.display = "block";
+            remoteVideo.style.zIndex = "10";
             remoteVideo.play().catch(e => console.warn("Remote video auto-play notice:", e));
             if (doctorAvatar) doctorAvatar.style.display = "none";
             startCanvasRecording(stream);
@@ -371,8 +372,8 @@ function initSocketSignaling() {
 
     socket.emit("join-call-room", { roomKey: roomKeyParam, role: roleParam });
 
-    socket.on("user-connected-to-call", async () => {
-        console.log("⚡ Peer connected to call room. Generating WebRTC offer...");
+    async function sendOffer() {
+        console.log("⚡ Generating WebRTC offer...");
         const pc = createPeerConnection();
         try {
             const offer = await pc.createOffer({
@@ -384,7 +385,10 @@ function initSocketSignaling() {
         } catch (e) {
             console.warn("Error creating WebRTC offer:", e);
         }
-    });
+    }
+
+    socket.on("user-connected-to-call", sendOffer);
+    socket.on("ready-for-call", sendOffer);
 
     socket.on("call-offer", async (data) => {
         console.log("⚡ WebRTC Call Offer received from peer.");

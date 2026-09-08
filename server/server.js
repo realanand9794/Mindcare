@@ -51,7 +51,7 @@ mongoose.connect(process.env.MONGO_URI || "mongodb://127.0.0.1:27017/mindcare")
         console.error("MongoDB Connection Error:", err);
     });
 
-const SYSTEM_BUILD_VERSION = "34.0.0";
+const SYSTEM_BUILD_VERSION = "36.0.0";
 
 // API Health Check Route
 app.get("/api/health", (req, res) => {
@@ -81,6 +81,10 @@ io.on("connection", (socket) => {
             socket.join(roomKey);
             console.log(`Socket ${socket.id} joined call room: ${roomKey} as ${role || 'participant'}`);
             socket.to(roomKey).emit("user-connected-to-call", { role, socketId: socket.id });
+            const roomSize = io.sockets.adapter.rooms.get(roomKey)?.size || 1;
+            if (roomSize > 1) {
+                socket.emit("ready-for-call", { role, roomSize });
+            }
         }
     });
 
