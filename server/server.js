@@ -82,9 +82,7 @@ io.on("connection", (socket) => {
             console.log(`Socket ${socket.id} joined call room: ${roomKey} as ${role || 'participant'}`);
             socket.to(roomKey).emit("user-connected-to-call", { role, socketId: socket.id });
             const roomSize = io.sockets.adapter.rooms.get(roomKey)?.size || 1;
-            if (roomSize > 1) {
-                socket.emit("ready-for-call", { role, roomSize });
-            }
+            socket.emit("room-joined", { role, roomSize });
         }
     });
 
