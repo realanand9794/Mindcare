@@ -29,6 +29,13 @@ let recordingCanvas = null;
 let canvasCtx = null;
 let recordingInterval = null;
 
+function updateDiag(text, color = "#eab308") {
+    const dot = document.getElementById("diagStatusDot");
+    const txt = document.getElementById("diagStatusText");
+    if (dot) dot.style.background = color;
+    if (txt) txt.innerText = text;
+}
+
 const rtcConfig = {
     iceServers: [
         { urls: "stun:stun.l.google.com:19302" },
@@ -36,16 +43,7 @@ const rtcConfig = {
         { urls: "stun:stun2.l.google.com:19302" },
         { urls: "stun:stun3.l.google.com:19302" },
         { urls: "stun:stun4.l.google.com:19302" },
-        { urls: "stun:global.stun.twilio.com:3478" },
-        {
-            urls: [
-                "turn:openrelay.metered.ca:80",
-                "turn:openrelay.metered.ca:443",
-                "turn:openrelay.metered.ca:443?transport=tcp"
-            ],
-            username: "openrelayproject",
-            credential: "openrelayproject"
-        }
+        { urls: "stun:global.stun.twilio.com:3478" }
     ],
     iceCandidatePoolSize: 10
 };
@@ -369,12 +367,12 @@ function createPeerConnection() {
             }
             remoteVideo.style.display = "block";
             remoteVideo.style.zIndex = "10";
-            remoteVideo.muted = false;
-            remoteVideo.volume = 1.0;
-            const playPromise = remoteVideo.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(e => console.warn("Remote video auto-play notice:", e));
-            }
+            remoteVideo.muted = true; // Required for mobile autoplay!
+            remoteVideo.play().catch(e => {
+                console.warn("Muted play retry:", e);
+                remoteVideo.muted = true;
+                remoteVideo.play().catch(() => {});
+            });
             remoteVideo.onloadedmetadata = () => {
                 remoteVideo.play().catch(() => {});
                 if (!isAudioMode) {
@@ -383,6 +381,7 @@ function createPeerConnection() {
                     if (callStatusBadge) callStatusBadge.style.display = "none";
                 }
             };
+            updateDiag("2-Way Video & Audio Active", "#22c55e");
         }
 
         if (remoteAudio) {
@@ -393,7 +392,9 @@ function createPeerConnection() {
             remoteAudio.volume = 1.0;
             const audioPromise = remoteAudio.play();
             if (audioPromise !== undefined) {
-                audioPromise.catch(e => console.warn("Remote audio auto-play notice:", e));
+                audioPromise.catch(e => {
+                    console.warn("Remote audio autoplay blocked by mobile policy, will play on screen tap:", e);
+                });
             }
         }
 
@@ -429,16 +430,19 @@ function createPeerConnection() {
         const badge = document.getElementById("callStatusBadge");
         if (peerConnection.iceConnectionState === "connected" || peerConnection.iceConnectionState === "completed") {
             console.log("🎉 WebRTC Peer Connection fully established!");
+            updateDiag("Live Consultation Connected", "#22c55e");
             if (badge && !isAudioMode) {
                 badge.innerText = "● Live Video Call";
                 badge.style.background = "#22c55e";
             }
         } else if (peerConnection.iceConnectionState === "checking") {
+            updateDiag("Connecting WebRTC P2P stream...", "#38bdf8");
             if (badge && !isAudioMode) {
                 badge.innerText = "● Connecting...";
             }
         } else if (peerConnection.iceConnectionState === "failed" || peerConnection.iceConnectionState === "disconnected") {
             console.warn("ICE connection failed/disconnected, attempting restart...");
+            updateDiag("Connection Reconnecting...", "#eab308");
             if (badge && !isAudioMode) {
                 badge.innerText = "● Reconnecting...";
                 badge.style.background = "#eab308";
@@ -474,6 +478,7 @@ function initSocketSignaling() {
 
     function doJoinRoom() {
         console.log(`Emitting join-call-room for room: ${roomKeyParam}, role: ${roleParam}`);
+        updateDiag(`Room: ${roomKeyParam} | Waiting for peer...`, "#eab308");
         socket.emit("join-call-room", { roomKey: roomKeyParam, role: roleParam });
     }
 
@@ -498,6 +503,7 @@ function initSocketSignaling() {
         try {
             isMakingOffer = true;
             console.log("⚡ Generating WebRTC offer...");
+            updateDiag("Generating offer...", "#38bdf8");
             const offer = await pc.createOffer({
                 offerToReceiveAudio: true,
                 offerToReceiveVideo: true
@@ -517,23 +523,28 @@ function initSocketSignaling() {
 
     socket.on("user-connected-to-call", async (data) => {
         console.log("⚡ Peer connected to room:", data);
+        updateDiag("Peer detected in room | Connecting...", "#38bdf8");
         await sendOffer();
     });
 
     socket.on("room-joined", (data) => {
         if (data && data.roomSize > 1) {
             console.log("Room has multiple participants (" + data.roomSize + "). Watchdog active...");
+            updateDiag(`Both in room (${data.roomSize}) | Exchanging media...`, "#38bdf8");
             setTimeout(() => {
                 if (!peerConnection || (peerConnection.signalingState === "stable" && !peerConnection.remoteDescription)) {
                     console.log("Watchdog fallback: initiating offer to ensure call establishes...");
                     sendOffer();
                 }
             }, 2000);
+        } else {
+            updateDiag(`Room: ${roomKeyParam} | Waiting for other person...`, "#eab308");
         }
     });
 
     socket.on("call-offer", async (data) => {
         console.log("⚡ WebRTC Call Offer received from peer.");
+        updateDiag("Offer received | Sending Answer...", "#38bdf8");
         const pc = createPeerConnection();
         try {
             const offerCollision = (data.offer && data.offer.type === "offer") &&
@@ -564,6 +575,7 @@ function initSocketSignaling() {
 
     socket.on("call-answer", async (data) => {
         console.log("⚡ WebRTC Call Answer received from peer.");
+        updateDiag("Answer received | Establishing media...", "#38bdf8");
         const pc = createPeerConnection();
         try {
             if (pc.signalingState === "have-local-offer") {
