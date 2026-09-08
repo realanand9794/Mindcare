@@ -368,10 +368,21 @@ function createPeerConnection() {
                 remoteVideo.srcObject = stream;
             }
             remoteVideo.style.display = "block";
-            remoteVideo.style.zIndex = "5";
+            remoteVideo.style.zIndex = "10";
             remoteVideo.muted = false;
             remoteVideo.volume = 1.0;
-            remoteVideo.play().catch(e => console.warn("Remote video auto-play notice:", e));
+            const playPromise = remoteVideo.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(e => console.warn("Remote video auto-play notice:", e));
+            }
+            remoteVideo.onloadedmetadata = () => {
+                remoteVideo.play().catch(() => {});
+                if (!isAudioMode) {
+                    if (doctorAvatar) doctorAvatar.style.display = "none";
+                    if (doctorNameHeader) doctorNameHeader.style.display = "none";
+                    if (callStatusBadge) callStatusBadge.style.display = "none";
+                }
+            };
         }
 
         if (remoteAudio) {
@@ -380,10 +391,13 @@ function createPeerConnection() {
             }
             remoteAudio.muted = false;
             remoteAudio.volume = 1.0;
-            remoteAudio.play().catch(e => console.warn("Remote audio auto-play notice:", e));
+            const audioPromise = remoteAudio.play();
+            if (audioPromise !== undefined) {
+                audioPromise.catch(e => console.warn("Remote audio auto-play notice:", e));
+            }
         }
 
-        if (!isAudioMode && event.track.kind === "video") {
+        if (!isAudioMode) {
             if (doctorAvatar) doctorAvatar.style.display = "none";
             if (doctorNameHeader) doctorNameHeader.style.display = "none";
             if (callStatusBadge) callStatusBadge.style.display = "none";
@@ -400,16 +414,35 @@ function createPeerConnection() {
 
     peerConnection.onicecandidate = (event) => {
         if (event.candidate && socket) {
-            socket.emit("ice-candidate", { roomKey: roomKeyParam, candidate: event.candidate });
+            const candPayload = {
+                candidate: event.candidate.candidate,
+                sdpMid: event.candidate.sdpMid,
+                sdpMLineIndex: event.candidate.sdpMLineIndex,
+                usernameFragment: event.candidate.usernameFragment
+            };
+            socket.emit("ice-candidate", { roomKey: roomKeyParam, candidate: candPayload });
         }
     };
 
     peerConnection.oniceconnectionstatechange = () => {
         console.log("🧊 ICE Connection State:", peerConnection.iceConnectionState);
+        const badge = document.getElementById("callStatusBadge");
         if (peerConnection.iceConnectionState === "connected" || peerConnection.iceConnectionState === "completed") {
             console.log("🎉 WebRTC Peer Connection fully established!");
-        } else if (peerConnection.iceConnectionState === "failed") {
-            console.warn("ICE connection failed, attempting restart...");
+            if (badge && !isAudioMode) {
+                badge.innerText = "● Live Video Call";
+                badge.style.background = "#22c55e";
+            }
+        } else if (peerConnection.iceConnectionState === "checking") {
+            if (badge && !isAudioMode) {
+                badge.innerText = "● Connecting...";
+            }
+        } else if (peerConnection.iceConnectionState === "failed" || peerConnection.iceConnectionState === "disconnected") {
+            console.warn("ICE connection failed/disconnected, attempting restart...");
+            if (badge && !isAudioMode) {
+                badge.innerText = "● Reconnecting...";
+                badge.style.background = "#eab308";
+            }
             if (peerConnection.restartIce) {
                 peerConnection.restartIce();
             }
@@ -439,7 +472,18 @@ function initSocketSignaling() {
 
     if (!socket) return;
 
-    socket.emit("join-call-room", { roomKey: roomKeyParam, role: roleParam });
+    function doJoinRoom() {
+        console.log(`Emitting join-call-room for room: ${roomKeyParam}, role: ${roleParam}`);
+        socket.emit("join-call-room", { roomKey: roomKeyParam, role: roleParam });
+    }
+
+    if (socket.connected) {
+        doJoinRoom();
+    }
+    socket.on("connect", () => {
+        console.log("Socket connected:", socket.id);
+        doJoinRoom();
+    });
 
     let isMakingOffer = false;
     const isPolite = (roleParam === "patient");
@@ -459,7 +503,11 @@ function initSocketSignaling() {
                 offerToReceiveVideo: true
             });
             await pc.setLocalDescription(offer);
-            socket.emit("call-offer", { roomKey: roomKeyParam, offer: pc.localDescription });
+            const payload = {
+                type: pc.localDescription.type,
+                sdp: pc.localDescription.sdp
+            };
+            socket.emit("call-offer", { roomKey: roomKeyParam, offer: payload });
         } catch (e) {
             console.warn("Error creating WebRTC offer:", e);
         } finally {
@@ -474,13 +522,13 @@ function initSocketSignaling() {
 
     socket.on("room-joined", (data) => {
         if (data && data.roomSize > 1) {
-            console.log("Room has multiple participants. Awaiting offer or fallback...");
+            console.log("Room has multiple participants (" + data.roomSize + "). Watchdog active...");
             setTimeout(() => {
-                if (peerConnection && (peerConnection.connectionState === "new" || peerConnection.iceConnectionState === "new") && peerConnection.signalingState === "stable") {
-                    console.log("Fallback offer trigger...");
+                if (!peerConnection || (peerConnection.signalingState === "stable" && !peerConnection.remoteDescription)) {
+                    console.log("Watchdog fallback: initiating offer to ensure call establishes...");
                     sendOffer();
                 }
-            }, 3000);
+            }, 2000);
         }
     });
 
@@ -504,7 +552,11 @@ function initSocketSignaling() {
             await processPendingCandidates();
             const answer = await pc.createAnswer();
             await pc.setLocalDescription(answer);
-            socket.emit("call-answer", { roomKey: roomKeyParam, answer: pc.localDescription });
+            const payload = {
+                type: pc.localDescription.type,
+                sdp: pc.localDescription.sdp
+            };
+            socket.emit("call-answer", { roomKey: roomKeyParam, answer: payload });
         } catch (e) {
             console.warn("Error handling WebRTC offer:", e);
         }
@@ -524,7 +576,7 @@ function initSocketSignaling() {
     });
 
     socket.on("ice-candidate", async (data) => {
-        if (data.candidate) {
+        if (data && data.candidate && data.candidate.candidate) {
             const candidate = new RTCIceCandidate(data.candidate);
             if (peerConnection && peerConnection.remoteDescription && peerConnection.remoteDescription.type) {
                 try {
@@ -594,10 +646,6 @@ async function initCall() {
 
         initSocketSignaling();
 
-        setTimeout(() => {
-            alert(`📞 Connected on Voice Call with ${doctorNameHeader ? doctorNameHeader.innerText : "Therapist"}`);
-        }, 600);
-
     } else {
         document.title = "MindCare Video Consultation";
         if (callStatusBadge) {
@@ -629,10 +677,6 @@ async function initCall() {
         }
 
         initSocketSignaling();
-
-        setTimeout(() => {
-            alert(`📹 Connected on Video Call with ${doctorNameHeader ? doctorNameHeader.innerText : "Therapist"}`);
-        }, 600);
     }
 }
 
